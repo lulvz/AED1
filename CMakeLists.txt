@@ -12,6 +12,7 @@ add_executable(AED_PROJETO
         schedule/students_classes.csv
         src/main.cpp
         src/class_uc.h
+        src/class_uc.cpp
         src/student.h
         src/class_schedule.h
         src/csv_reader.cpp

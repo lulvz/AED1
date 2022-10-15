@@ -6,8 +6,6 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <fstream>  
-#include <sstream>
 
 #include "./class_uc.h"
 #include "./class_schedule.h"
@@ -52,8 +50,8 @@ int main() {
             class_schedule.cuc.class_code= parts[0];
             class_schedule.cuc.uc_code = parts[1];
             class_schedule.weekDay = parts[2];
-            class_schedule.startHour = atof(parts[3].c_str());
-            class_schedule.duration = atof(parts[4].c_str());
+            class_schedule.startHour = stof(parts[3]);
+            class_schedule.duration = stof(parts[4]);
             class_schedule.type = parts[5];
             classes_schedules.push_back(class_schedule);
         }
@@ -72,16 +70,11 @@ int main() {
         }
     }
 
-
+    cuc_sort_code(classes_ucs);
 
     for(ClassUc cuc : classes_ucs) {
         cout << cuc.uc_code << " " << cuc.class_code << endl;
     }
-    for(ClassSchedule c : classes_schedules) {
-        cout << c.startHour << endl;
-    }
-    for(Student s : students) {
-        cout << s.code << endl;
-    }
+
     return 0;
 }

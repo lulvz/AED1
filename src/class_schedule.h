@@ -3,10 +3,11 @@
 
 #include <string>
 #include "class_uc.h"
-struct ClassSchedule {
-    ClassUc cuc;
-    std::string weekDay, type;
-    int startHour, duration; 
+class ClassSchedule {
+    public:
+        ClassUc cuc;
+        std::string weekDay, type;
+        float startHour, duration;
 };
 
 #endif
