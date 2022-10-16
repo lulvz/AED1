@@ -6,8 +6,14 @@ CsvReader::CsvReader(const std::string& filename) {
     if (!this->file) {
         this->error = true;    
     }
-    // skip first line
-    this->readNextLine();
+    // skip first line and store it in the header variable
+    std::string line;
+    std::getline(this->file, line);
+    std::stringstream ss(line);
+    std::string item;
+    while (std::getline(ss, item, ',')) {
+        this->header.push_back(item);
+    }
 }
 
 std::vector<std::string> CsvReader::readNextLine() {
@@ -21,6 +27,10 @@ std::vector<std::string> CsvReader::readNextLine() {
         }
     }
     return parts;
+}
+
+std::vector<std::string> CsvReader::getHeader() {
+    return this->header;
 }
 
 bool CsvReader::eof() const { 

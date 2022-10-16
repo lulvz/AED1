@@ -70,11 +70,17 @@ int main() {
         }
     }
 
-    cuc_sort_code(classes_ucs);
-
     for(ClassUc cuc : classes_ucs) {
         cout << cuc.uc_code << " " << cuc.class_code << endl;
     }
-
+    for(ClassSchedule c : classes_schedules) {
+        cout << c.startHour << endl;
+    }
+    for(Student s : students) {
+        cout << s.code << endl;
+    }
+    for(string s : reader_class_uc.getHeader()) {
+        cout << s << endl;
+    }
     return 0;
 }

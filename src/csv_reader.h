@@ -12,9 +12,12 @@ public:
     CsvReader(const std::string& filename);
     std::vector<std::string> readNextLine();
     bool eof() const;
+    std::vector<std::string> getHeader();
 private:
     std::string filename;
     std::fstream file;
+
+    std::vector<std::string> header;
 };
 
 
