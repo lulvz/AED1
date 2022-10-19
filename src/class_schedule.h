@@ -2,12 +2,13 @@
 #define CLASS_SCHEDULE_H
 
 #include <string>
-#include "class_uc.h"
+#include <list>
+#include "uc_turma.h"
+#include "slot.h"
 class ClassSchedule {
     public:
-        ClassUc cuc;
-        std::string weekDay, type;
-        float startHour, duration;
+        std::string uc, turma;
+        std::list<Slot> horaUcTurma;
 };
 
 #endif

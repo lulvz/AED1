@@ -6,8 +6,9 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <map>
 
-#include "./class_uc.h"
+#include "./uc_turma.h"
 #include "./class_schedule.h"
 #include "./student.h"
 
@@ -20,67 +21,36 @@
 using namespace std;
 
 int main() {
-    
-    // create the vectors for the structs
-    vector<ClassUc> classes_ucs;
-    vector<ClassSchedule> classes_schedules;
-    vector<Student> students;
-
     // create readers for the csv files
     CsvReader reader_class_uc(CLASS_UC_FILE);
     CsvReader reader_class_schedule(CLASS_SCHEDULE_FILE);
     CsvReader reader_student(STUDENT_FILE);
 
-    // iterate over lines of the file and populate the vector classes_ucs
+    CsvReader reader_writer("../schedule/test.csv");
+
+    // map with ucs and slots
+    map<UCTurma, list<Slot>> class_uc_map_slots;
+
+    // iterate over lines of the file 
     while (!reader_class_uc.eof()) {
         vector<string> parts = reader_class_uc.readNextLine();
         if(parts.size() == 2) {
-            ClassUc class_uc;
-            class_uc.uc_code = parts[0];
-            class_uc.class_code = parts[1];
-            classes_ucs.push_back(class_uc);
+            UCTurma class_uc(parts[0], parts[1]);
+            // populate map of classes and ucs and slots with classes and ucs
+            class_uc_map_slots[class_uc] = list<Slot>();
         }
     }
 
-    // iterate over lines of the file and populate the vector classes_schedules
+    // populate slots vector
     while (!reader_class_schedule.eof()) {
         vector<string> parts = reader_class_schedule.readNextLine();
-        if(parts.size() == 6) {
-            ClassSchedule class_schedule;
-            class_schedule.cuc.class_code= parts[0];
-            class_schedule.cuc.uc_code = parts[1];
-            class_schedule.weekDay = parts[2];
-            class_schedule.startHour = stof(parts[3]);
-            class_schedule.duration = stof(parts[4]);
-            class_schedule.type = parts[5];
-            classes_schedules.push_back(class_schedule);
+        if(parts.size() == 2) {
+            Slot slot = Slot(parts[2], stof(parts[3]), stof(parts[4]), parts[5]);
+
+            // populate map of classes and ucs and slots
+            class_uc_map_slots[UCTurma(parts[0], parts[2])].push_back(slot);
         }
     }
 
-    // iterate over lines of the file and populate the vector students
-    while (!reader_student.eof()) {
-        vector<string> parts = reader_student.readNextLine();
-        if(parts.size() == 4) {
-            Student student;
-            student.code = parts[0];
-            student.name = parts[1];
-            student.cuc.uc_code = parts[2];
-            student.cuc.class_code = parts[3];
-            students.push_back(student);
-        }
-    }
-
-    for(ClassUc cuc : classes_ucs) {
-        cout << cuc.uc_code << " " << cuc.class_code << endl;
-    }
-    for(ClassSchedule c : classes_schedules) {
-        cout << c.startHour << endl;
-    }
-    for(Student s : students) {
-        cout << s.code << endl;
-    }
-    for(string s : reader_class_uc.getHeader()) {
-        cout << s << endl;
-    }
     return 0;
 }

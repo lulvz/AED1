@@ -1,11 +1,16 @@
 #ifndef STUDENT_H
 #define STUDENT_H
-#include "class_uc.h"
+
+#include "uc_turma.h"
 #include <string>
+#include <list>
 
 class Student {
     public:
-        ClassUc cuc;
-        std::string name, code;   
+        std::string name, code;
+        std::list<UCTurma> turmas;
+        bool operator< (const Student &s) {
+            return code < s.code;
+        }
 };
 #endif
