@@ -15,15 +15,8 @@ class UCTurma {
             this->uc = uc;
             this->turma = turma; 
         }
-//        bool operator == (const UCTurma &other) {
-//            if (other.uc == uc && other.turma == turma){
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        }
-
 };
+
 namespace std{
     template<>
     struct less<UCTurma>{

@@ -31,6 +31,9 @@ int main() {
     // map with ucs and slots
     map<UCTurma, list<Slot>> class_uc_map_slots;
 
+    // map with students and ucs
+    map<Student, list<UCTurma>> student_map_ucs;
+
     // iterate over lines of the file 
     while (!reader_class_uc.eof()) {
         vector<string> parts = reader_class_uc.readNextLine();
@@ -44,11 +47,20 @@ int main() {
     // populate slots vector
     while (!reader_class_schedule.eof()) {
         vector<string> parts = reader_class_schedule.readNextLine();
-        if(parts.size() == 2) {
+        if(parts.size() == 6) {
             Slot slot = Slot(parts[2], stof(parts[3]), stof(parts[4]), parts[5]);
 
             // populate map of classes and ucs and slots
-            class_uc_map_slots[UCTurma(parts[0], parts[2])].push_back(slot);
+            class_uc_map_slots[UCTurma(parts[1], parts[0])].push_back(slot);
+        }
+    }
+
+    while(!reader_student.eof()) {
+        vector<string> parts = reader_student.readNextLine();
+        if(parts.size() == 4) {
+            UCTurma class_uc(parts[2], parts[3]);
+            //populate map of students and ucs
+            student_map_ucs[Student(parts[0], parts[1])].push_back(class_uc);
         }
     }
 

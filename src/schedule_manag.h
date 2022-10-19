@@ -16,12 +16,9 @@ class ScheduleManag {
             this->students = students;
             this->schedules = schedules;
         }
-        
-    private:
+
         std::set<Student> students;
         std::vector<ClassSchedule> schedules;
-
-
 };
 
 #endif //SCHEDULE_MANAG_H

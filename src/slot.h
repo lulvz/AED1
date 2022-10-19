@@ -15,20 +15,7 @@ class Slot {
             this->duration = duration;
             this->type = type;
         }
-        std::string getWeekDay() {
-            return this->weekDay;
-        }
-        float getStartHour() {
-            return this->startHour;
-        }
-        float getDuration() {
-            return this->duration;
-        }
-        std::string getType() {
-            return this->type;
-        }
         
-    private:
         std::string weekDay, type;
         float startHour, duration;
 };
