@@ -17,4 +17,5 @@ add_executable(AED_PROJETO
         src/csv_reader.h
         src/schedule_manag.h
         src/uc_turma.h
-        src/slot.h)
+        src/slot.h
+        src/schedule_manag.cpp)

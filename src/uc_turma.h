@@ -15,6 +15,10 @@ class UCTurma {
             this->uc = uc;
             this->turma = turma; 
         }
+
+        bool operator== (const UCTurma &ucTurma) {
+            return uc == ucTurma.uc && turma == ucTurma.turma;
+        }
 };
 
 namespace std{

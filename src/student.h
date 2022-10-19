@@ -16,6 +16,10 @@ class Student {
             return code < s.code;
         }
 
+        bool operator== (const Student &s)  {
+            return code == s.code;
+        }
+
         std::string name, code;
 };
 
