@@ -5,12 +5,13 @@
 #ifndef AED_PROJETO_MENU_H
 #define AED_PROJETO_MENU_H
 
-class menu {
+class Menu {
     public:
-        menu();
+        Menu();
         void printBaseMenu();
         void printMenu1();
         void printMenu2();
+        void printMenu3();
 };
 
 #endif //AED_PROJETO_MENU_H

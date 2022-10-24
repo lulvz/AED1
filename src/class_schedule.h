@@ -2,17 +2,16 @@
 #define CLASS_SCHEDULE_H
 
 #include <string>
-#include <list>
+#include <vector>
 #include "uc_turma.h"
 #include "slot.h"
-using namespace std;
 
 class ClassSchedule {
     public:
-        ClassSchedule(list <Slot> slots, UCTurma classUc) : class_uc(classUc), horaUcTurma(slots){ }
+        ClassSchedule(std::vector <Slot> slots, UCTurma classUc) : class_uc(classUc), horaUcTurma(slots){ }
 
         UCTurma class_uc;
-        std::list<Slot> horaUcTurma;
+        std::vector<Slot> horaUcTurma;
 };
 
 #endif

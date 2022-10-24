@@ -47,7 +47,7 @@ int main() {
 //        if(parts.size() == 2) {
 //            UCTurma class_uc(parts[0], parts[1]);
 //            // populate map of classes and ucs and slots with classes and ucs
-//            class_uc_map_slots[class_uc] = list<Slot>();
+//            class_uc_map_slots[class_uc] = vector<Slot>();
 //        }
 //    }
 //
