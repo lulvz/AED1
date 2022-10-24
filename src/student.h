@@ -3,7 +3,7 @@
 
 #include "uc_turma.h"
 #include <string>
-#include <list>
+#include <vector>
 
 class Student {
     public:

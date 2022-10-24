@@ -13,7 +13,7 @@ void ScheduleManag::readFiles() {    // iterate over lines of the file
         if(parts.size() == 2) {
             UCTurma class_uc(parts[0], parts[1]);
             // populate map of classes and ucs and slots with classes and ucs
-            class_uc_map_slots[class_uc] = list<Slot>();
+            class_uc_map_slots[class_uc] = vector<Slot>();
         }
     }
 
@@ -38,11 +38,11 @@ void ScheduleManag::readFiles() {    // iterate over lines of the file
     }
 }
 
-map<UCTurma, list<Slot>> ScheduleManag::getClassUCMapSlots() {
+map<UCTurma, vector<Slot>> ScheduleManag::getClassUCMapSlots() {
     return this->class_uc_map_slots;
 }
 
-map<Student, list<UCTurma>> ScheduleManag::getStudentMapUCs() {
+map<Student, vector<UCTurma>> ScheduleManag::getStudentMapUCs() {
     return this->student_map_ucs;
 }
 
@@ -72,28 +72,73 @@ vector<Slot> ScheduleManag::getSlots() {
     return slots;
 }
 
-//vector<UCTurma> ScheduleManag::getUCsByStudent(Student student) {
-//    vector<UCTurma> ucs;
-//    for (auto & [key, val] : this->student_map_ucs) {
-//        if (key == student) {
-//            for (auto const& uc : val) {
-//                ucs.push_back(uc);
-//            }
-//        }
-//    }
-//    return ucs;
-//}
-//
-//vector<Slot> ScheduleManag::getSlotsByUC(UCTurma uc) {
-//    vector<Slot> slots;
-//    for (auto & [key, val] : this->class_uc_map_slots) {
-//        if (key == uc) {
-//            for (auto const& slot : val) {
-//                slots.push_back(slot);
-//            }
-//        }
-//    }
-//    return slots;
-//}
+vector<ClassSchedule> ScheduleManag::getClassSchedules() {
+    vector<ClassSchedule> class_schedules;
+    for (auto const& [key, val] : this->class_uc_map_slots) {
+        class_schedules.push_back(ClassSchedule(val, key));
+    }
+    return class_schedules;
+}
 
+vector<UCTurma> ScheduleManag::getUCTsByStudent(Student student) {
+    vector<UCTurma> ucs;
+    for (auto const& uc : this->student_map_ucs[student]) {
+        ucs.push_back(uc);
+    }
+    return ucs;
+}
 
+vector<Student> ScheduleManag::getStudentsByClass(string clss) {
+    vector<Student> students;
+    for (auto const& [key, val] : this->student_map_ucs) {
+        for (auto const& uc : val) {
+            if (uc.turma == clss) {
+                students.push_back(key);
+            }
+        }
+    }
+    return students;
+}
+
+vector<Student> ScheduleManag::getStudentsByUC(string uc) {
+    vector<Student> students;
+    for(auto const& [key, val] : this->student_map_ucs) {
+        for(auto const& uct : val) {
+            if(uct.uc == uc) {
+                students.push_back(key);
+            }
+        }
+    }
+}
+
+vector<Student> ScheduleManag::getStudentsWithMoreThanXUC(int x) {
+    vector<Student> students;
+    for(auto const& [key, val] : this->student_map_ucs) {
+        if(val.size() > x) {
+            students.push_back(key);
+        }
+    }
+    return students;
+}
+
+vector<Slot> ScheduleManag::getSlotsByStudent(Student student) {
+    vector<Slot> slots;
+    for(auto const& uc : this->student_map_ucs[student]) {
+        for(auto const& slot : this->class_uc_map_slots[uc]) {
+            slots.push_back(slot);
+        }
+    }
+    return slots;
+}
+
+vector<Slot> ScheduleManag::getSlotsByUC(string uc) {
+    vector<Slot> slots;
+    for (auto const& [key, val] : this->class_uc_map_slots) {
+        if(key.uc == uc) {
+            for (auto const& slot : val) {
+                slots.push_back(slot);
+            }
+        }
+    }
+    return slots;
+}
