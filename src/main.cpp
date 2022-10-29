@@ -19,6 +19,8 @@
 #define CLASS_SCHEDULE_FILE "../schedule/classes.csv"
 #define STUDENT_FILE "../schedule/students_classes.csv"
 
+#define CLASS_LIMIT_STUDENTS 30
+
 using namespace std;
 
 int main() {
@@ -29,14 +31,47 @@ int main() {
     // read files
     sm.readFiles();
 
-    //get slots
-    vector<Slot> slots = sm.getSlots();
+    Student student = Student("202020302", "Carolina");
 
-    //print slots
-    for (Slot slot : slots) {
-        cout << slot.weekDay << " " << slot.startHour << " " << slot.duration << " " << slot.type << endl;;
+    // check if student is in the system
+    if (find(sm.getStudents().begin(), sm.getStudents().end(), student) != sm.getStudents().end()) {
+        cout << "Student is in the system" << endl;
+    } else {
+        cout << "Student is not in the system" << endl;
     }
 
+    // get all classes of a student
+    vector<UCTurma> ucts = sm.getUCTsByStudent(student);
+    cout << "Student " << student.name << " is enrolled in the following classes:" << endl;
+    for (auto &uct : ucts) {
+        cout << "uc: " << uct.uc << " " << "turma: " << uct.turma << endl;
+    }
+
+    // // get turmas of all the students
+    // map<Student, vector<UCTurma>> studentMapUCTs = sm.getStudentMapUCs();
+    // cout << "All students and their classes:" << endl;
+    // for (auto &studentUCTs : studentMapUCTs) {
+    //     cout << "Student " << studentUCTs.first.name << " is enrolled in the following classes:" << endl;
+    //     for (auto &uct : studentUCTs.second) {
+    //         cout << "uc: " << uct.uc << " " << "turma: " << uct.turma << endl;
+    //     }
+    // }
+
+    // remove student Carolina from turma 1LEIC10 and uc L.EIC001
+    sm.removeStudentFromClassAndUC(student, UCTurma("L.EIC001", "1LEIC10"));
+    
+    // check turmas of Carolina
+    ucts = sm.getUCTsByStudent(student);
+    cout << "Student " << student.name << " is enrolled in the following classes:" << endl;
+    for (auto &uct : ucts) {
+        cout << "uc: " << uct.uc << " " << "turma: " << uct.turma << endl;
+    }
+
+    // check number of students in all the classes of uc "L.EIC001"
+    vector<UCTurma> uctsL_EIC001 = sm.getUCTsByUC("L.EIC001");
+    for (auto &uct : uctsL_EIC001) {
+        cout << "Number of students in class " << uct.turma << " of uc " << uct.uc << " is " << sm.getStudentsByClassAndUC(uct).size() << endl;
+    }
 
     return 0;
 }

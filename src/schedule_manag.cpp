@@ -2,10 +2,11 @@
 // Created by lulas on 10/19/2022.
 //
 
+#include <algorithm>
 #include "schedule_manag.h"
 
-ScheduleManag::ScheduleManag(std::string class_uc_file, std::string class_schedule_file, std::string student_file)
-        : reader_class_schedule(class_schedule_file), reader_class_uc(class_uc_file), reader_student(student_file), cuf(class_uc_file), csf(class_schedule_file), sf(student_file) { }
+ScheduleManag::ScheduleManag(std::string class_uc_file, std::string class_schedule_file, std::string student_file, int max_students_per_class)
+        : reader_class_schedule(class_schedule_file), reader_class_uc(class_uc_file), reader_student(student_file), cuf(class_uc_file), csf(class_schedule_file), sf(student_file), max_students(max_students_per_class) { }
 
 void ScheduleManag::readFiles() {    // iterate over lines of the file 
     while (!reader_class_uc.eof()) {
@@ -72,6 +73,26 @@ vector<Slot> ScheduleManag::getSlots() {
     return slots;
 }
 
+int ScheduleManag::getMaxStudents() {
+    return this->max_students;
+}
+
+////////////
+
+vector<UCTurma> ScheduleManag::getUCTsByUC(std::string uc) {
+    vector<UCTurma> ucs;
+    for (auto const& [key, val] : this->class_uc_map_slots) {
+        if(key.uc == uc) {
+            ucs.push_back(key);
+        }
+    }
+    return ucs;
+}
+
+////////////
+////////////
+////////////
+
 vector<ClassSchedule> ScheduleManag::getClassSchedules() {
     vector<ClassSchedule> class_schedules;
     for (auto const& [key, val] : this->class_uc_map_slots) {
@@ -111,6 +132,18 @@ vector<Student> ScheduleManag::getStudentsByUC(string uc) {
     }
 }
 
+vector<Student> ScheduleManag::getStudentsByClassAndUC(UCTurma uct) {
+    vector<Student> students;
+    for(auto const& [key, val] : this->student_map_ucs) {
+        for(auto const& uct2 : val) {
+            if(uct2.uc == uct.uc && uct2.turma == uct.turma) {
+                students.push_back(key);
+            }
+        }
+    }
+    return students;
+}
+
 vector<Student> ScheduleManag::getStudentsWithMoreThanXUC(int x) {
     vector<Student> students;
     for(auto const& [key, val] : this->student_map_ucs) {
@@ -141,4 +174,79 @@ vector<Slot> ScheduleManag::getSlotsByUC(string uc) {
         }
     }
     return slots;
+}
+
+vector<Slot> ScheduleManag::getSlotsByClass(string clss) {
+    vector<Slot> slots;
+    for (auto const& [key, val] : this->class_uc_map_slots) {
+        if(key.turma == clss) {
+            for (auto const& slot : val) {
+                slots.push_back(slot);
+            }
+        }
+    }
+    return slots;
+}
+
+vector<Slot> ScheduleManag::getSlotsByClassAndUC(UCTurma uct) {
+    vector<Slot> slots;
+    for (auto const& [key, val] : this->class_uc_map_slots) {
+        if(key.turma == uct.turma && key.uc == uct.uc) {
+            for (auto const& slot : val) {
+                slots.push_back(slot);
+            }
+        }
+    }
+    return slots;
+}
+
+// literally just adds a UCTurma to the vector in the student map
+// doesnt check if there is already a UCTurma with the same uc and class
+void ScheduleManag::addStudentToClass(Student student, string clss) {
+    // iterate over ucs and check one that has less than max_students variable
+    for (auto const& [key, val] : this->class_uc_map_slots) {
+        if(key.turma == clss) {
+            if(getStudentsByClass(clss).size() < max_students) {
+                this->student_map_ucs[student].push_back(key);
+            }
+        }
+    }
+}
+
+void ScheduleManag::addStudentToUC(Student student, string uc) {
+    // check the classes for the first one in the uc that has less than max_students
+    string clss = "";
+    for (auto const& [key, val] : this->class_uc_map_slots) {
+        if(key.uc == uc) {
+            if(getStudentsByClass(key.turma).size() < max_students) {
+                clss = key.turma;
+                break;
+            }
+        }
+    }
+    student_map_ucs[student].push_back(UCTurma(uc, clss));
+}
+
+
+// THIS ONE WORKS
+void ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
+    // check if the class has less than max_students
+    if(getStudentsByClass(uct.turma).size() < max_students) {
+        student_map_ucs[student].push_back(uct);
+    }
+}
+
+// ADDS 5 TIMES EVERYTIME
+void ScheduleManag::removeStudentFromClass(Student student, string clss) {
+    student_map_ucs[student].erase(remove_if(student_map_ucs[student].begin(), student_map_ucs[student].end(), [clss](UCTurma uct) { return uct.turma == clss; }), student_map_ucs[student].end());
+}
+
+// WORKS
+void ScheduleManag::removeStudentFromUC(Student student, string uc) {
+    student_map_ucs[student].erase(remove_if(student_map_ucs[student].begin(), student_map_ucs[student].end(), [uc](UCTurma uct) { return uct.uc == uc; }), student_map_ucs[student].end());
+}
+
+// WORKS
+void ScheduleManag::removeStudentFromClassAndUC(Student student, UCTurma uct) {
+    student_map_ucs[student].erase(remove_if(student_map_ucs[student].begin(), student_map_ucs[student].end(), [uct](UCTurma uct2) { return uct2.uc == uct.uc && uct2.turma == uct.turma; }), student_map_ucs[student].end());
 }

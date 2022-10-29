@@ -30,6 +30,7 @@ void Menu::printMenu2() {
     cout << "1 - Horário de um estudante" << endl;	    // 1 - Horário de um estudante
     cout << "2 - Horário de uma turma" << endl;	    // 2 - Horário de uma turma
     cout << "3 - Horário de uma unidade curricular" << endl;	    // 3 - Horário de uma unidade curricular
+    cout << "4 - Horário de uma turma numa determinada unidade curricular" << endl;	    // 4 - Horário de uma turma e unidade curricular
 }
 
 void Menu::printMenu3() {
