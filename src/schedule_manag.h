@@ -66,6 +66,8 @@ class ScheduleManag {
 
         // map with students and ucs
         map<Student, vector<UCTurma>> student_map_ucs;
+
+        // queue structures
 };
 
 #endif //SCHEDULE_MANAG_H

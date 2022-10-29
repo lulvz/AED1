@@ -9,7 +9,7 @@
 
 class Slot {
     public:
-        Slot(std::string weekDay, float startHour, float duration, std::string type) {
+        Slot(std::string weekDay, float startHour, float duration, std::string type, UCTurma uct) : uct(uct){
             this->weekDay = weekDay;
             this->startHour = startHour;
             this->duration = duration;
@@ -18,6 +18,8 @@ class Slot {
         
         std::string weekDay, type;
         float startHour, duration;
+
+        UCTurma uct;
 };
 
 #endif //AED_PROJETO_SLOT_H

@@ -21,7 +21,7 @@ void ScheduleManag::readFiles() {    // iterate over lines of the file
     while (!reader_class_schedule.eof()) {
         vector<string> parts = reader_class_schedule.readNextLine();
         if(parts.size() == 6) {
-            Slot slot = Slot(parts[2], stof(parts[3]), stof(parts[4]), parts[5]);
+            Slot slot = Slot(parts[2], stof(parts[3]), stof(parts[4]), parts[5], UCTurma(parts[1], parts[0]));
 
             // populate map of classes and ucs and slots
             class_uc_map_slots[UCTurma(parts[1], parts[0])].push_back(slot);
