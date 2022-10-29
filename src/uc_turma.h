@@ -6,7 +6,6 @@
 #define AED_PROJETO_UC_TURMA_H
 
 #include <string>
-#include "slot.h"
 
 class UCTurma {
     public:
