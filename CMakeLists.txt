@@ -13,9 +13,11 @@ add_executable(AED_PROJETO
         src/main.cpp
         src/student.h
         src/class_schedule.h
-        src/csv_reader.cpp
-        src/csv_reader.h
         src/schedule_manag.h
         src/uc_turma.h
         src/slot.h
-        src/schedule_manag.cpp src/menu.h src/menu.cpp)
+        src/schedule_manag.cpp src/menu.h src/menu.cpp
+        src/utility/bst.h
+        src/utility/csv_reader.cpp
+        src/utility/csv_reader.h
+        src/utility/node.h)

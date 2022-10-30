@@ -7,7 +7,12 @@
 
 #include "student.h"
 #include "class_schedule.h"
-#include "csv_reader.h"
+#include "utility/csv_reader.h"
+#include "utility/bst.h"
+
+//TODO
+//#include "utility/bst.h"
+
 #include <string>
 #include <vector>
 #include <set>
@@ -18,14 +23,18 @@ using namespace std;
 class ScheduleManag {
     public:
         //class constructor takes in the names of the files to read
-        ScheduleManag(std::string class_uc_file, std::string class_schedule_file, std::string student_file, int max_students_per_class = 30);
+        ScheduleManag(std::string class_uc_file, std::string class_schedule_file, std::string student_file, int max_students_per_class,
+        std::string class_uc_file_write, std::string class_schedule_file_write, std::string student_file_write);
         // read files and populate maps
         void readFiles();
+        // write files the same way they were read
+        void writeFiles();
         //getters for the maps
         map<UCTurma, vector<Slot>> getClassUCMapSlots();
         // menu 1-1
         map<Student, vector<UCTurma>> getStudentMapUCs();
-        
+        // getter for the binary tree
+        set<Student> getStudentsSet();
 
         //getters for the vectors
         vector<UCTurma> getUCTs();
@@ -69,18 +78,26 @@ class ScheduleManag {
         void removeStudentFromUC(Student student, string uc);
         void removeStudentFromClassAndUC(Student student, UCTurma uct);
 
+        // write the state of the schedule to the files
+        void endDay();
+
     private:
         //variables for the readers and the files
         std::string cuf, csf, sf;
         CsvReader reader_class_uc, reader_class_schedule, reader_student;
 
+        // variables for the writers of the save files
+        std::string cuf_save, csf_save, sf_save;
+        CsvReader reader_class_uc_save, reader_class_schedule_save, reader_student_save;
+        
+        // max number of students per class
         int max_students;
 
         // map with ucs and slots
         map<UCTurma, vector<Slot>> class_uc_map_slots;
 
-        // map with students and ucs
-        map<Student, vector<UCTurma>> student_map_ucs;
+        // binary tree with students
+        set<Student> students_set;
 
         // queue structures
 
