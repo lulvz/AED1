@@ -10,6 +10,7 @@ public:
     bool error = false;
     CsvReader(const std::string& filename);
     std::vector<std::string> readNextLine();
+    void clearFile();
     void writeLine(std::vector<std::string>);
     void writeLines(std::vector<std::vector<std::string>>);
     bool eof() const;

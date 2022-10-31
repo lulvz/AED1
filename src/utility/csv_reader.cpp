@@ -32,7 +32,14 @@ std::vector<std::string> CsvReader::readNextLine() {
     }
     return parts;
 }
-
+// just open file in write mode trunc, which deletes content
+// of the file and then open it back up in append mode
+void CsvReader::clearFile() {
+    this->file_write.close();
+    this->file_write.open(this->filename, std::ios::out | std::ios::trunc);
+    this->file_write.close();
+    this->file_write.open(this->filename, std::ios::app);
+}
 void CsvReader::writeLine(std::vector<std::string> sv) {
     std::string final = "";
     for(std::string s : sv) {

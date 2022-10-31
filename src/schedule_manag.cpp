@@ -57,6 +57,11 @@ void ScheduleManag::readFiles() {    // iterate over lines of the file
 }
 
 void ScheduleManag::writeFiles() {
+    // clear the files before writing to them
+    reader_class_uc_save.clearFile();
+    reader_class_schedule_save.clearFile();
+    reader_student_save.clearFile();
+
     // write single line with the headers to the save files
     reader_class_uc_save.writeLine(vector<string>{reader_class_uc.getHeader()[0], reader_class_uc.getHeader()[1]});
     reader_class_schedule_save.writeLine(vector<string>{reader_class_schedule.getHeader()[0], reader_class_schedule.getHeader()[1], reader_class_schedule.getHeader()[2], reader_class_schedule.getHeader()[3], reader_class_schedule.getHeader()[4], reader_class_schedule.getHeader()[5]});
@@ -265,14 +270,14 @@ void ScheduleManag::addStudentToUC(Student student, string uc) {
     //check for the first class of the uc that has less than max_students
     for (auto const& [key, val] : this->class_uc_map_slots) {
         if(key.uc == uc) {
-            // check if the slots that are PL or P dont overlap with the student's slots
+            // check if the slots that are PL or TP dont overlap with the student's slots
             // for the UCs that the student is already in
             bool can_add = true;
             for(auto const& slot : val) {
-                if(slot.type == "PL" || slot.type == "P") {
+                if(slot.type == "PL" || slot.type == "TP") {
                     // check if the student has a slot that overlaps with this slot
                     for(auto const& student_slot : this->getSlotsByStudent(student)) {
-                        if(student_slot.type == "PL" || student_slot.type == "P") {
+                        if(student_slot.type == "PL" || student_slot.type == "TP") {
                             if(slot.startHour + slot.duration > student_slot.startHour && slot.startHour < student_slot.startHour + student_slot.duration) {
                                 // if it overlaps, dont add the student to this class
                                 can_add = false;
@@ -307,19 +312,19 @@ void ScheduleManag::addStudentToUC(Student student, string uc) {
         }
     }
     // all the classes are full, so print an error
-    cout << "All classes are full, or the ones that are open have slots of type P/PL that overlap with the ones already in the student" << endl;
+    cout << "All classes are full, or the ones that are open have slots of type TP/PL that overlap with the ones already in the student" << endl;
 }
 
 // THIS ONE WORKS, now checks for overlapping slots
 void ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
-    // check if the slots that are PL or P dont overlap with the student's slots
+    // check if the slots that are PL or TP dont overlap with the student's slots
     // for the UCs that the student is already in
     bool can_add = true;
     for(auto const& slot : this->getSlotsByClassAndUC(uct)) {
-        if(slot.type == "PL" || slot.type == "P") {
+        if(slot.type == "PL" || slot.type == "TP") {
             // check if the student has a slot that overlaps with this slot
             for(auto const& student_slot : this->getSlotsByStudent(student)) {
-                if(student_slot.type == "PL" || student_slot.type == "P") {
+                if(student_slot.type == "PL" || student_slot.type == "TP") {
                     if(slot.startHour + slot.duration > student_slot.startHour && slot.startHour < student_slot.startHour + student_slot.duration) {
                         // if it overlaps, dont add the student to this class
                         can_add = false;
