@@ -22,6 +22,10 @@
 #define CLASS_SCHEDULE_FILE "../schedule/classes.csv"
 #define STUDENT_FILE "../schedule/students_classes.csv"
 
+#define CLASS_UC_FILE_WRITE "../schedule/save/classes_per_uc_write.csv"
+#define CLASS_SCHEDULE_FILE_WRITE "../schedule/save/classes_write.csv"
+#define STUDENT_FILE_WRITE "../schedule/save/students_classes_write.csv"
+
 #define CLASS_LIMIT_STUDENTS 30
 
 using namespace std;
@@ -29,7 +33,7 @@ using namespace std;
 int main() {
     
     // create schedule manager
-    ScheduleManag sm(CLASS_UC_FILE, CLASS_SCHEDULE_FILE, STUDENT_FILE);
+    ScheduleManag sm(CLASS_UC_FILE, CLASS_SCHEDULE_FILE, STUDENT_FILE, CLASS_LIMIT_STUDENTS, CLASS_UC_FILE_WRITE, CLASS_SCHEDULE_FILE_WRITE, STUDENT_FILE_WRITE);
 
     // read files
     sm.readFiles();
@@ -59,6 +63,10 @@ int main() {
     for (auto it = ucts.begin(); it != ucts.end(); it++) {
         cout << it->uc << " " << it->turma << endl;
     }
-    
+
+    // write files
+    cout << "writing files" << endl;
+    sm.writeFiles();
+
     return 0;
 }
