@@ -17,6 +17,7 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <queue>
 
 using namespace std;
 
@@ -56,6 +57,8 @@ class ScheduleManag {
         set<Student> getStudentsByClass(string clss);
         //menu 1-4
         set<Student> getStudentsByUC(string uc);
+        //menu 1-1
+        
 
         set<Student> getStudentsByClassAndUC(UCTurma uct);
 
@@ -72,12 +75,25 @@ class ScheduleManag {
         vector<Slot> getSlotsByClassAndUC(UCTurma uct);
 
         //queue editors for adding and removing stude nts from classes/ucs
+
+        // deprecated //
         void addStudentToClass(Student student, string clss);
-        void addStudentToUC(Student student, string uc);
-        void addStudentToClassAndUC(Student student, UCTurma uct);
         void removeStudentFromClass(Student student, string clss);
+        // deprecated //
+
+        void addStudentToUC(Student student, string uc);
+        void addStudentToUCQ(Student student, string uc);
+
+        void addStudentToClassAndUC(Student student, UCTurma uct);
+        void addStudentToClassAndUCQ(Student student, UCTurma uct);
+
         void removeStudentFromUC(Student student, string uc);
+        void removeStudentFromUCQ(Student student, string uc);
+
         void removeStudentFromClassAndUC(Student student, UCTurma uct);
+        void removeStudentFromClassAndUCQ(Student student, UCTurma uct);
+
+        void modifyStudentsClassAndUCQ(Student student, UCTurma uct, UCTurma new_uct);
 
         // write the state of the schedule to the files
         void endDay();
@@ -100,7 +116,22 @@ class ScheduleManag {
         // binary tree with students
         set<Student> students_set;
 
+                
+        struct StudentQ {
+            Student student;
+            UCTurma uct;
+        };
+
+        struct StudentQModify {
+            Student student;
+            UCTurma old_uct;
+            UCTurma new_uct;
+        };
+
         // queue structures
+        queue<StudentQ> class_add_queue;
+        queue<StudentQ> class_remove_queue;
+        queue<StudentQModify> class_modify_queue;
 
 };
 

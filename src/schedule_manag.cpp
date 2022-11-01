@@ -316,6 +316,15 @@ void ScheduleManag::addStudentToUC(Student student, string uc) {
     // all the classes are full, so print an error
     cout << "All classes are full, or the ones that are open have slots of type TP/PL that overlap with the ones already in the student" << endl;
 }
+// adds a struct with the arguments to the queue of actions to be done at the end of the day
+void ScheduleManag::addStudentToUCQ(Student student, string uc) {
+    // create variable of type StudentQ with the arguments
+    // UCTurma is takes an empty turma because it is not used in the addStudentToUC function
+    // and will be used to differentiate between addStudentToUC and addStudentToClassAndUC
+    StudentQ sq {student, UCTurma(uc, "")};
+    // add the variable to the queue
+    this->class_add_queue.push(sq);
+}
 
 // THIS ONE WORKS, now checks for overlapping slots
 void ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
@@ -354,6 +363,13 @@ void ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
             students_set.insert(student);
         }
     }
+}
+// adds a struct with the arguments to the queue of actions to be done at the end of the day
+void ScheduleManag::addStudentToClassAndUCQ(Student student, UCTurma uct) {
+    // create variable of type StudentQ with the arguments
+    StudentQ sq {student, uct};
+    // add the variable to the queue
+    this->class_add_queue.push(sq);
 }
 
 // THIS ONE WORKs?
@@ -395,6 +411,14 @@ void ScheduleManag::removeStudentFromUC(Student student, string uc) {
         students_set.insert(found);
     }
 }
+void ScheduleManag::removeStudentFromUCQ(Student student, string uc) {
+    // create variable of type StudentQ with the arguments
+    // UCTurma is takes an empty turma because it is not used in the removeStudentFromUC function
+    // and will be used to differentiate between removeStudentFromUC and removeStudentFromClassAndUC
+    StudentQ sq {student, UCTurma(uc, "")};
+    // add the variable to the queue
+    this->class_remove_queue.push(sq);
+}
 
 // WORKS
 void ScheduleManag::removeStudentFromClassAndUC(Student student, UCTurma uct) {
@@ -414,4 +438,66 @@ void ScheduleManag::removeStudentFromClassAndUC(Student student, UCTurma uct) {
         // add the student back to the set
         students_set.insert(found);
     }
+}
+void ScheduleManag::removeStudentFromClassAndUCQ(Student student, UCTurma uct) {
+    // create variable of type StudentQ with the arguments
+    StudentQ sq {student, uct};
+    // add the variable to the queue
+    this->class_remove_queue.push(sq);
+}
+
+void ScheduleManag::modifyStudentsClassAndUCQ(Student student, UCTurma old_uct, UCTurma new_uct) {
+    // create variable of type StudentQModify with the arguments
+    StudentQModify sq {student, old_uct, new_uct};
+    // add the variable to the modify queue
+    this->class_modify_queue.push(sq);
+}
+
+void ScheduleManag::endDay() {
+    // go over each queue and execute the actions
+
+    // queue of students to be added to a class
+    while(!class_add_queue.empty()) {
+        // get the first element of the queue
+        StudentQ sq = class_add_queue.front();
+        // remove the first element of the queue
+        class_add_queue.pop();
+        // check if the queue is for addStudentToClassAndUC or addStudentToUC
+        if(sq.uct.turma == "") {
+            // addStudentToUC if turma is empty
+            addStudentToUC(sq.student, sq.uct.uc);
+        } else {
+            // addStudentToClassAndUC if we have a full UCTurma object
+            addStudentToClassAndUC(sq.student, sq.uct);
+        }
+    }
+
+    // queue of students to be removed from a class
+    while(!class_remove_queue.empty()) {
+        // get the first element of the queue
+        StudentQ sq = class_remove_queue.front();
+        // remove the first element of the queue
+        class_remove_queue.pop();
+        // check if the queue is for removeStudentFromClassAndUC or removeStudentFromUC
+        if(sq.uct.turma == "") {
+            // removeStudentFromUC if turma is empty
+            removeStudentFromUC(sq.student, sq.uct.uc);
+        } else {
+            // removeStudentFromClassAndUC if we have a full UCTurma object
+            removeStudentFromClassAndUC(sq.student, sq.uct);
+        }
+    }
+
+    // queue of students to be modified
+    while(!class_modify_queue.empty()) {
+        // get the first element of the queue
+        StudentQModify sq = class_modify_queue.front();
+        // remove the first element of the queue
+        class_modify_queue.pop();
+        // remove the student from the old class
+        removeStudentFromClassAndUC(sq.student, sq.old_uct);
+        // add the student to the new class
+        addStudentToClassAndUC(sq.student, sq.new_uct);
+    }
+
 }

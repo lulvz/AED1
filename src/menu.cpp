@@ -27,12 +27,11 @@ Menu::Menu(string cuf, string csf, string scf, int students_max, string cufw, st
 
 void Menu::printBaseMenu() {
     cout << "Menu" << endl;
-    cout << "0 - Sair" << endl;
+    cout << "0 - Sair e gravar" << endl;
     cout << "1 - Informações gerais" << endl;	    // 1 - Informações sobre o horário
     cout << "2 - Informações sobre o horário" << endl;	// 2 - Informações sobre o horário
     cout << "3 - Efetuar pedidos de alteração gerais" << endl;	    // 3 - Pedidos de alteração
     cout << "4 - Acabar dia" << endl;        // 4 - Acabar dia
-    cout << "exit - Sair" << endl;
 }
 
 void Menu::printMenu1() {
@@ -55,16 +54,20 @@ void Menu::printMenu1() {
                 running = false;
                 break;
             case 1:
-                // mostrar alunos em cada turma de cada uc
-                // go over each uc
-                for(auto uc : sm.getUCs()) {
-                    // go over each class
-                    for(auto c : sm.getStudentsByUC(uc)) {
-                        //
+                {
+                // ocupaçao das turmas
+                for(auto [key, value] : sm.getClassUCMapSlots()) {
+                    set<Student> s = sm.getStudentsByClassAndUC(key);
+                    cout << key.uc << " " << key.turma << " " << s.size() << "/" << sm.getMaxStudents() << endl;
+
+                    // print students
+                    for(auto it = s.begin(); it != s.end(); it++) {
+                        cout << it->code << " " << it->name << endl;
                     }
+                    cout << endl;
                 }
-                
                 break;
+                }
             case 2:
                 {
                 cout << "Turma a consultar: ";
@@ -304,7 +307,11 @@ void Menu::printMenu3() {
             cout << endl << endl;
 
             cout << "UC pretendida: "; cin >> uc_; cout << endl;
-            sm.addStudentToUC(Student(st_code, n_std), uc_);
+            
+            // add to the queue
+            sm.addStudentToUCQ(Student(st_code, n_std), uc_);
+            cout << "Alteração adicionada à fila de espera." << endl;
+            
             break;
             }
         case 2:
@@ -317,7 +324,11 @@ void Menu::printMenu3() {
             cout << endl << endl;
 
             cout << "UC pretendida: "; cin >> uc_; cout << endl;
-            sm.removeStudentFromUC(Student(st_code, n_std), uc_);
+            
+            // add to the queue
+            sm.removeStudentFromUCQ(Student(st_code, n_std), uc_);
+            cout << "Alteração adicionada à fila de espera." << endl;
+
             break;
             }
         case 3:
@@ -332,8 +343,11 @@ void Menu::printMenu3() {
             cout << "UC pretendida: "; cin >> uc_; cout << endl;
             cout << "Turma anterior: "; cin >> turma; cout << endl;
             cout << "Nova turma: "; cin >> turma_n; cout << endl;
-            sm.removeStudentFromClassAndUC(Student(st_code, n_std), UCTurma(uc_, turma));
-            sm.addStudentToClassAndUC(Student(st_code, n_std), UCTurma(uc_, turma_n));
+            
+            // add to the queue
+            sm.modifyStudentsClassAndUCQ(Student(st_code, n_std), UCTurma(uc_, turma), UCTurma(uc_, turma_n));
+            cout << "Alteração adicionada à fila de espera." << endl;
+            
             break;
             }
         case 4:
@@ -346,15 +360,16 @@ void Menu::printMenu3() {
             cout << endl << endl;
 
             cout << "UC pretendida: "; cin >> uc_; cout << endl;
-            
+
             cout << "Turmas a alterar (Deixar ambos os campos em branco para terminar): ";
             while (true) {
                 cout << "Turma anterior: "; cin >> turma; cout << endl;
                 cout << "Nova turma: "; cin >> turma_n; cout << endl;
                 if (turma == "" || turma_n == "") { break; }
                 else {
-                    sm.removeStudentFromClassAndUC(Student(st_code, n_std), UCTurma(uc_, turma));
-                    sm.addStudentToClassAndUC(Student(st_code, n_std), UCTurma(uc_, turma_n));
+                    // add to the queue
+                    sm.modifyStudentsClassAndUCQ(Student(st_code, n_std), UCTurma(uc_, turma), UCTurma(uc_, turma_n));
+                    cout << "Alteração adicionada à fila de espera." << endl;
                 }
             }
             break;
@@ -377,6 +392,7 @@ int Menu::baseMenuLoop() {
         cin >> opt; cout << endl;
         switch(opt) {
             case 0:
+                sm.writeFiles();
                 running = false;
                 break;
             case 1:
@@ -389,7 +405,9 @@ int Menu::baseMenuLoop() {
                 printMenu3();
                 break;
             case 4:
-                //...//
+                cout << "Executando alterações em espera..." << endl;	
+                sm.endDay();
+                cout << "Alterações executadas." << endl;
                 break;
             default:
                 cout << "Número de opção inválido." << endl;

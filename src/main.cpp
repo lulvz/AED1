@@ -27,7 +27,7 @@
 #define CLASS_SCHEDULE_FILE_WRITE "../schedule/save/classes_write.csv"
 #define STUDENT_FILE_WRITE "../schedule/save/students_classes_write.csv"
 
-#define CLASS_LIMIT_STUDENTS 30
+#define CLASS_LIMIT_STUDENTS 26
 
 using namespace std;
 
