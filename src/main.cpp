@@ -12,6 +12,7 @@
 #include "./class_schedule.h"
 #include "./student.h"
 #include "./schedule_manag.h"
+#include "./menu.h"
 
 #include "utility/csv_reader.h"
 
@@ -31,42 +32,64 @@
 using namespace std;
 
 int main() {
-    
-    // create schedule manager
-    ScheduleManag sm(CLASS_UC_FILE, CLASS_SCHEDULE_FILE, STUDENT_FILE, CLASS_LIMIT_STUDENTS, CLASS_UC_FILE_WRITE, CLASS_SCHEDULE_FILE_WRITE, STUDENT_FILE_WRITE);
 
-    // read files
-    sm.readFiles();
+    // ask for user input, either to load from write files or to load the default ones
+    string input = "";
+    cout << "Load from last save? (y/n): ";
 
-    Student student = Student("202020302", "Carolina");
-    
-    //get the set of students
-    set<Student> s = sm.getStudentsSet();
-
-    // print s
-    for (auto it = s.begin(); it != s.end(); it++) {
-        cout << *it << endl;
+    // check if input is valid (y/n)
+    while (input != "y" && input != "n") {
+        cin >> input;
+        if (input != "y" && input != "n") {
+            cout << "Invalid input. Please try again: ";
+        }
     }
 
-    // find carolina in the set
-    auto it = s.find(student);
-    if (it != s.end()) {
-        cout << "Carolina found" << endl;
+    // create menu based on user input
+    if (input == "y") {
+        Menu menu(CLASS_UC_FILE_WRITE, CLASS_SCHEDULE_FILE_WRITE, STUDENT_FILE_WRITE, CLASS_LIMIT_STUDENTS, CLASS_UC_FILE, CLASS_SCHEDULE_FILE, STUDENT_FILE);
+        menu.baseMenuLoop();
     } else {
-        cout << "Carolina not found" << endl;
+        Menu menu(CLASS_UC_FILE, CLASS_SCHEDULE_FILE, STUDENT_FILE, CLASS_LIMIT_STUDENTS, CLASS_UC_FILE_WRITE, CLASS_SCHEDULE_FILE_WRITE, STUDENT_FILE_WRITE);
+        menu.baseMenuLoop();
     }
 
-    // get the vector of ucts of carolina
-    vector<UCTurma> ucts = sm.getStudentsSet().find(student)->classes;
+    
+    // // create schedule manager
+    // ScheduleManag sm(CLASS_UC_FILE, CLASS_SCHEDULE_FILE, STUDENT_FILE, CLASS_LIMIT_STUDENTS, CLASS_UC_FILE_WRITE, CLASS_SCHEDULE_FILE_WRITE, STUDENT_FILE_WRITE);
 
-    // print ucts
-    for (auto it = ucts.begin(); it != ucts.end(); it++) {
-        cout << it->uc << " " << it->turma << endl;
-    }
+    // // read files
+    // sm.readFiles();
 
-    // write files
-    cout << "writing files" << endl;
-    sm.writeFiles();
+    // Student student = Student("202020302", "Carolina");
+    
+    // //get the set of students
+    // set<Student> s = sm.getStudentsSet();
+
+    // // print s
+    // for (auto it = s.begin(); it != s.end(); it++) {
+    //     cout << *it << endl;
+    // }
+
+    // // find carolina in the set
+    // auto it = s.find(student);
+    // if (it != s.end()) {
+    //     cout << "Carolina found" << endl;
+    // } else {
+    //     cout << "Carolina not found" << endl;
+    // }
+
+    // // get the vector of ucts of carolina
+    // vector<UCTurma> ucts = sm.getStudentsSet().find(student)->classes;
+
+    // // print ucts
+    // for (auto it = ucts.begin(); it != ucts.end(); it++) {
+    //     cout << it->uc << " " << it->turma << endl;
+    // }
+
+    // // write files
+    // cout << "writing files" << endl;
+    // sm.writeFiles();
 
     return 0;
 }

@@ -38,6 +38,7 @@ class ScheduleManag {
 
         //getters for the vectors
         vector<UCTurma> getUCTs();
+        set<string> getUCs();
         vector<Student> getStudents();
         vector<Slot> getSlots(); 
         int getMaxStudents();
@@ -52,11 +53,11 @@ class ScheduleManag {
         vector<UCTurma> getUCTsByStudent(Student student);
 
         // menu 1-2
-        vector<Student> getStudentsByClass(string clss);
+        set<Student> getStudentsByClass(string clss);
         //menu 1-4
-        vector<Student> getStudentsByUC(string uc);
+        set<Student> getStudentsByUC(string uc);
 
-        vector<Student> getStudentsByClassAndUC(UCTurma uct);
+        set<Student> getStudentsByClassAndUC(UCTurma uct);
 
         //menu 1-3
         vector<Student> getStudentsWithMoreThanXUC(int x);

@@ -52,7 +52,8 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "deque": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "queue": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }

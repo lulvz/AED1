@@ -47,7 +47,7 @@ void ScheduleManag::readFiles() {    // iterate over lines of the file
                 student.addclass(UCTurma(parts[2], parts[3]));
             } else {
                 students_set.insert(student);
-                student = Student(parts[0], parts[1]);
+                student = student2;
                 student.addclass(UCTurma(parts[2], parts[3]));
             }
         }
@@ -98,6 +98,14 @@ vector<UCTurma> ScheduleManag::getUCTs() {
     vector<UCTurma> ucs;
     for (auto const& [key, val] : this->class_uc_map_slots) {
         ucs.push_back(key);
+    }
+    return ucs;
+}
+
+set<string> ScheduleManag::getUCs() {
+    set<string> ucs;
+    for (auto const& [key, val] : this->class_uc_map_slots) {
+        ucs.insert(key.uc);
     }
     return ucs;
 }
@@ -155,35 +163,36 @@ vector<UCTurma> ScheduleManag::getUCTsByStudent(Student student) {
     return vector<UCTurma>();
 }
 
-vector<Student> ScheduleManag::getStudentsByClass(string turma) {
-    vector<Student> students;
+set<Student> ScheduleManag::getStudentsByClass(string turma) {
+    set<Student> students;
     for (auto const& student : this->students_set) {
         for (auto const& uct : student.classes) {
             if(uct.turma == turma) {
-                students.push_back(student);
+                students.insert(student);
             }
         }
     }
     return students;
 }
 
-vector<Student> ScheduleManag::getStudentsByUC(string uc) {
-    vector<Student> students;
+set<Student> ScheduleManag::getStudentsByUC(string uc) {
+    set<Student> students;
     for (auto const& student : this->students_set) {
         for (auto const& uct : student.classes) {
             if(uct.uc == uc) {
-                students.push_back(student);
+                students.insert(student);
             }
         }
     }
+    return students;
 }
 
-vector<Student> ScheduleManag::getStudentsByClassAndUC(UCTurma uct) {
-    vector<Student> students;
+set<Student> ScheduleManag::getStudentsByClassAndUC(UCTurma uct) {
+    set<Student> students;
     for (auto const& student : this->students_set) {
         for (auto const& uct2 : student.classes) {
             if(uct2.uc == uct.uc && uct2.turma == uct.turma) {
-                students.push_back(student);
+                students.insert(student);
             }
         }
     }
@@ -203,15 +212,12 @@ vector<Student> ScheduleManag::getStudentsWithMoreThanXUC(int x) {
 vector<Slot> ScheduleManag::getSlotsByStudent(Student student) {
     vector<Slot> slots;
     // complexity O(n^3)
-    for (auto const& [key, val] : this->class_uc_map_slots) {
-        for (auto const& uct : student.classes) {
-            if(uct.turma == key.turma && uct.uc == key.uc) {
-                for (auto const& slot : val) {
-                    slots.push_back(slot);
-                }
-            }
+    // find student in set
+    for(auto s : students_set.find(student)->classes) {
+        for(auto uct : getSlotsByClassAndUC(s)) {
+            slots.push_back(uct);
         }
-    } 
+    }
     return slots;
 }
 
@@ -244,12 +250,8 @@ vector<Slot> ScheduleManag::getSlotsByClass(string clss) {
 vector<Slot> ScheduleManag::getSlotsByClassAndUC(UCTurma uct) {
     vector<Slot> slots;
     // complexity O(n)
-    for (auto const& [key, val] : this->class_uc_map_slots) {
-        if(key.turma == uct.turma && key.uc == uct.uc) {
-            for (auto const& slot : val) {
-                slots.push_back(slot);
-            }
-        }
+    for(auto slot : class_uc_map_slots[uct]) {
+        slots.push_back(slot);
     }
     return slots;
 }
@@ -289,7 +291,7 @@ void ScheduleManag::addStudentToUC(Student student, string uc) {
             }
 
             // check if class has less than max_students
-            if(val.size() < this->max_students && can_add) {
+            if(getStudentsByClassAndUC(key).size() < this->max_students && can_add) {
                 // search students_set for student
                 auto it = students_set.find(student);
                 if(it != students_set.end()) {
@@ -335,7 +337,7 @@ void ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
         }
     }
     // check if the class has less than max_students
-    if(getStudentsByClass(uct.turma).size() < max_students) {
+    if(getStudentsByClassAndUC(uct).size() < max_students) {
         // search students_set for student
         auto it = students_set.find(student);
         if(it != students_set.end()) {
