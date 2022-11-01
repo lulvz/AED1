@@ -226,6 +226,7 @@ void Menu::printMenu2() {
                     cout << "Esta turma não tem horários definidos." << endl;
                 }
                 else {
+                    cout << "UC/Turma: Dia\tHora de começo\tDuração\tTipo de aula" << endl;
                     for (Slot i: SlotByclss) {
                         cout << i.uct.uc << "/" << i.uct.turma << "\t" << i.weekDay << "\t" << i.startHour << "\t" << i.duration << "\t" << i.type << endl;
                     }
@@ -243,6 +244,7 @@ void Menu::printMenu2() {
                     cout << "Esta UC não tem horários definidos." << endl;
                 }
                 else {
+                    cout << "UC/Turma: Dia\tHora de começo\tDuração\tTipo de aula" << endl;
                     for (Slot i: SlotByuc) {
                         cout << i.uct.uc << "/" << i.uct.turma << "\t" << i.weekDay << "\t" << i.startHour << "\t" << i.duration << "\t" << i.type << endl;
                     }
@@ -263,6 +265,7 @@ void Menu::printMenu2() {
                     cout << "Esta turma não tem horários definidos para esta UC." << endl;
                 }
                 else {
+                    cout << "UC/Turma: Dia\tHora de começo\tDuração\tTipo de aula" << endl;
                     for (Slot i: SlotByclssuc) {
                         cout << i.uct.uc << "/" << i.uct.turma << "\t" << i.weekDay << "\t" << i.startHour << "\t" << i.duration << "\t" << i.type << endl;
                     }
