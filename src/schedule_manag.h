@@ -81,10 +81,10 @@ class ScheduleManag {
         void removeStudentFromClass(Student student, string clss);
         // deprecated //
 
-        void addStudentToUC(Student student, string uc);
+        bool addStudentToUC(Student student, string uc);
         void addStudentToUCQ(Student student, string uc);
 
-        void addStudentToClassAndUC(Student student, UCTurma uct);
+        bool addStudentToClassAndUC(Student student, UCTurma uct);
         void addStudentToClassAndUCQ(Student student, UCTurma uct);
 
         void removeStudentFromUC(Student student, string uc);
@@ -115,7 +115,6 @@ class ScheduleManag {
 
         // binary tree with students
         set<Student> students_set;
-
                 
         struct StudentQ {
             Student student;
@@ -132,6 +131,9 @@ class ScheduleManag {
         queue<StudentQ> class_add_queue;
         queue<StudentQ> class_remove_queue;
         queue<StudentQModify> class_modify_queue;
+
+        deque<StudentQ> not_executed_requests_add;
+        deque<StudentQModify> not_executed_requests_modify;
 
 };
 

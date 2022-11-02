@@ -7,6 +7,18 @@
 #include "utility/csv_reader.h"
 #include "utility/bst.h"
 
+map<string ,int> semana ={{"Monday",2},{"Tuesday",3},{"Wednesday",4},{"Thursday",5},{"Friday",6}};
+
+bool cmp_day(const Slot &s1, const Slot &s2){
+    if(semana[s1.weekDay] < semana[s2.weekDay]){
+        return true;
+    }
+    else if(semana[s1.weekDay] == semana[s2.weekDay]){
+        return s1.startHour < s2.startHour;
+    }
+    return false;
+}
+
 ScheduleManag::ScheduleManag(std::string class_uc_file, std::string class_schedule_file, std::string student_file, int max_students_per_class, std::string class_uc_file_write, std::string class_schedule_file_write, std::string student_file_write) 
         : reader_class_schedule(class_schedule_file), reader_class_uc(class_uc_file), reader_student(student_file), cuf(class_uc_file), csf(class_schedule_file), sf(student_file), max_students(max_students_per_class),
         cuf_save(class_uc_file_write), csf_save(class_schedule_file_write), sf_save(student_file_write), reader_class_uc_save(class_uc_file_write), reader_class_schedule_save(class_schedule_file_write), reader_student_save(student_file_write) { }
@@ -141,6 +153,7 @@ vector<UCTurma> ScheduleManag::getUCTsByUC(std::string uc) {
     }
     return ucs;
 }
+
 //
 //////////////
 //////////////
@@ -218,6 +231,7 @@ vector<Slot> ScheduleManag::getSlotsByStudent(Student student) {
             slots.push_back(uct);
         }
     }
+    sort(slots.begin(), slots.end(), cmp_day);
     return slots;
 }
 
@@ -231,6 +245,7 @@ vector<Slot> ScheduleManag::getSlotsByUC(string uc) {
             }
         }
     }
+    sort(slots.begin(), slots.end(), cmp_day);
     return slots;
 }
 
@@ -244,6 +259,7 @@ vector<Slot> ScheduleManag::getSlotsByClass(string clss) {
             }
         }
     }
+    sort(slots.begin(), slots.end(), cmp_day);
     return slots;
 }
 
@@ -253,6 +269,7 @@ vector<Slot> ScheduleManag::getSlotsByClassAndUC(UCTurma uct) {
     for(auto slot : class_uc_map_slots[uct]) {
         slots.push_back(slot);
     }
+    sort(slots.begin(), slots.end(), cmp_day);
     return slots;
 }
 
@@ -268,28 +285,50 @@ vector<Slot> ScheduleManag::getSlotsByClassAndUC(UCTurma uct) {
 //}
 
 // THIS ONE WORKS, now checks for overlapping slots
-void ScheduleManag::addStudentToUC(Student student, string uc) {
+bool ScheduleManag::addStudentToUC(Student student, string uc) {
+    bool can_add = false;
+
+    // check if student exists in students_set
+    auto it = students_set.find(student);
+    if(it != students_set.end()) {
+        // check if the student is already in the uc
+        for(auto uct : it->classes) {
+            if(uct.uc == uc) {
+                cout << "Student already in uc" << endl;
+                return false;
+            }
+        }
+    } else {
+        // if studet doenst exist, cout error
+        cout << "Student doesn't exist" << endl;
+        return false;
+    }
+
     //check for the first class of the uc that has less than max_students
     for (auto const& [key, val] : this->class_uc_map_slots) {
         if(key.uc == uc) {
             // check if the slots that are PL or TP dont overlap with the student's slots
             // for the UCs that the student is already in
-            bool can_add = true;
+            vector<Slot> student_slots = this->getSlotsByStudent(student);
             for(auto const& slot : val) {
                 if(slot.type == "PL" || slot.type == "TP") {
                     // check if the student has a slot that overlaps with this slot
-                    for(auto const& student_slot : this->getSlotsByStudent(student)) {
+                    for(auto const& student_slot : student_slots) {
                         if(student_slot.type == "PL" || student_slot.type == "TP") {
-                            if(slot.startHour + slot.duration > student_slot.startHour && slot.startHour < student_slot.startHour + student_slot.duration) {
+                            // check if the slots overlap in any way
+                            if(!((student_slot.startHour <= slot.startHour + slot.duration) && (slot.startHour <= student_slot.startHour + student_slot.duration))) {
                                 // if it overlaps, dont add the student to this class
-                                can_add = false;
+                                can_add = true;
                                 break;
                             }
                         }
                     }
                 }
             }
-
+            if(!can_add) {
+                cout << "The slots of type PL/TP of the class overlap with the ones already in the student or the uc/class doesn't exist" << endl;
+                return false;
+            }
             // check if class has less than max_students
             if(getStudentsByClassAndUC(key).size() < this->max_students && can_add) {
                 // search students_set for student
@@ -309,12 +348,13 @@ void ScheduleManag::addStudentToUC(Student student, string uc) {
                     student.classes.push_back(uct);
                     students_set.insert(student);
                 }
-                return;
+                return true;
             }
         }
     }
     // all the classes are full, so print an error
-    cout << "All classes are full, or the ones that are open have slots of type TP/PL that overlap with the ones already in the student" << endl;
+    cout << "All classes are full" << endl;
+    return false;
 }
 // adds a struct with the arguments to the queue of actions to be done at the end of the day
 void ScheduleManag::addStudentToUCQ(Student student, string uc) {
@@ -327,23 +367,45 @@ void ScheduleManag::addStudentToUCQ(Student student, string uc) {
 }
 
 // THIS ONE WORKS, now checks for overlapping slots
-void ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
+bool ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
+    bool can_add = false;
+
+    // check if student exists in students_set
+    auto it = students_set.find(student);
+    if(it != students_set.end()) {
+        // check if the student is already in the uc
+        for(auto ucturma : it->classes) {
+            if(ucturma.uc == uct.uc) {
+                cout << "Student already in uc" << endl;
+                return false;
+            }
+        }
+    } else {
+        // if studet doenst exist, cout error
+        cout << "Student doesn't exist" << endl;
+        return false;
+    }
+
     // check if the slots that are PL or TP dont overlap with the student's slots
     // for the UCs that the student is already in
-    bool can_add = true;
+    vector<Slot> student_slots = this->getSlotsByStudent(student);
     for(auto const& slot : this->getSlotsByClassAndUC(uct)) {
         if(slot.type == "PL" || slot.type == "TP") {
             // check if the student has a slot that overlaps with this slot
-            for(auto const& student_slot : this->getSlotsByStudent(student)) {
+            for(auto const& student_slot : student_slots) {
                 if(student_slot.type == "PL" || student_slot.type == "TP") {
-                    if(slot.startHour + slot.duration > student_slot.startHour && slot.startHour < student_slot.startHour + student_slot.duration) {
+                    if(!((student_slot.startHour <= slot.startHour + slot.duration) && (slot.startHour <= student_slot.startHour + student_slot.duration))) {
                         // if it overlaps, dont add the student to this class
-                        can_add = false;
+                        can_add = true;
                         break;
                     }
                 }
             }
         }
+    }
+    if (!can_add) {
+        cout << "The slots of type PL/TP of the class overlap with the ones already in the student or the uc/class doesn't exist" << endl;
+        return false;
     }
     // check if the class has less than max_students
     if(getStudentsByClassAndUC(uct).size() < max_students) {
@@ -362,7 +424,11 @@ void ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
             student.classes.push_back(uct);
             students_set.insert(student);
         }
+        return true;
     }
+    // all the classes are full, so print an error
+    cout << "All classes are full" << endl;
+    return false;
 }
 // adds a struct with the arguments to the queue of actions to be done at the end of the day
 void ScheduleManag::addStudentToClassAndUCQ(Student student, UCTurma uct) {
@@ -460,15 +526,22 @@ void ScheduleManag::endDay() {
     while(!class_add_queue.empty()) {
         // get the first element of the queue
         StudentQ sq = class_add_queue.front();
+        cout << "[*] Adding student " << sq.student.name << " to class " << sq.uct.turma << " of UC " << sq.uct.uc << endl;
         // remove the first element of the queue
         class_add_queue.pop();
         // check if the queue is for addStudentToClassAndUC or addStudentToUC
         if(sq.uct.turma == "") {
             // addStudentToUC if turma is empty
-            addStudentToUC(sq.student, sq.uct.uc);
+            if (!addStudentToUC(sq.student, sq.uct.uc)) {
+                // if the student could not be added to the uc, add the request to not_executed_requests_add
+                not_executed_requests_add.push_back(sq);
+            }
         } else {
             // addStudentToClassAndUC if we have a full UCTurma object
-            addStudentToClassAndUC(sq.student, sq.uct);
+            if (!addStudentToClassAndUC(sq.student, sq.uct)) {
+                // if the student could not be added to the class, add the request to not_executed_requests_add
+                not_executed_requests_add.push_back(sq);
+            }
         }
     }
 
@@ -476,6 +549,7 @@ void ScheduleManag::endDay() {
     while(!class_remove_queue.empty()) {
         // get the first element of the queue
         StudentQ sq = class_remove_queue.front();
+        cout << "[*] Removing student " << sq.student.name << " from class " << sq.uct.turma << " of UC " << sq.uct.uc << endl;
         // remove the first element of the queue
         class_remove_queue.pop();
         // check if the queue is for removeStudentFromClassAndUC or removeStudentFromUC
@@ -492,12 +566,19 @@ void ScheduleManag::endDay() {
     while(!class_modify_queue.empty()) {
         // get the first element of the queue
         StudentQModify sq = class_modify_queue.front();
+        cout << "[*] Modifying student " << sq.student.name << " from class " << sq.old_uct.turma << " of UC " << sq.old_uct.uc << " to class " << sq.new_uct.turma << " of UC " << sq.new_uct.uc << endl;
         // remove the first element of the queue
         class_modify_queue.pop();
         // remove the student from the old class
         removeStudentFromClassAndUC(sq.student, sq.old_uct);
         // add the student to the new class
-        addStudentToClassAndUC(sq.student, sq.new_uct);
+        if (!addStudentToClassAndUC(sq.student, sq.new_uct)) {
+            // if the student could not be added to the new class, add them back to the old class
+            addStudentToClassAndUC(sq.student, sq.old_uct);
+
+            // add to the not_executed queue
+            not_executed_requests_modify.push_back(sq);
+        }
     }
 
 }
