@@ -10,7 +10,6 @@
 #include "utility/csv_reader.h"
 #include "utility/bst.h"
 
-//TODO
 //#include "utility/bst.h"
 
 #include <string>
@@ -21,6 +20,7 @@
 
 using namespace std;
 
+/// @brief Classe responsável pela implementaação de todas as funcionalidades do programa.
 class ScheduleManag {
     public:
         //class constructor takes in the names of the files to read

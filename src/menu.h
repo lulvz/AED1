@@ -10,6 +10,7 @@
 
 using namespace std;
 
+/// @brief Classe responável pela interface da aplicação.
 class Menu {
     public:
         Menu(string cuf, string csf, string scf, int students_max, string cufw, string csfw, string scfw);

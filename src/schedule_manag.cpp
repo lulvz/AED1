@@ -19,10 +19,23 @@ bool cmp_day(const Slot &s1, const Slot &s2){
     return false;
 }
 
+/*! @brief Construtor da classe ScheduleManag.
+* Recebe todos os ficheiros necessários à leitura e escrita dos horários.
+*
+* @param class_uc_file 
+* @param class_schedule_file 
+* @param student_file 
+* @param max_students_per_class 
+* @param class_uc_file_write 
+* @param class_schedule_file_write 
+* @param student_file_write
+*/
 ScheduleManag::ScheduleManag(std::string class_uc_file, std::string class_schedule_file, std::string student_file, int max_students_per_class, std::string class_uc_file_write, std::string class_schedule_file_write, std::string student_file_write) 
         : reader_class_schedule(class_schedule_file), reader_class_uc(class_uc_file), reader_student(student_file), cuf(class_uc_file), csf(class_schedule_file), sf(student_file), max_students(max_students_per_class),
         cuf_save(class_uc_file_write), csf_save(class_schedule_file_write), sf_save(student_file_write), reader_class_uc_save(class_uc_file_write), reader_class_schedule_save(class_schedule_file_write), reader_student_save(student_file_write) { }
 
+/// @brief Função que lê todos os ficheiros e preeche os maps associados.
+/// Esta função tem complexidade de O(n).
 void ScheduleManag::readFiles() {    // iterate over lines of the file 
     while (!reader_class_uc.eof()) {
         vector<string> parts = reader_class_uc.readNextLine();
@@ -68,6 +81,8 @@ void ScheduleManag::readFiles() {    // iterate over lines of the file
 
 }
 
+/// @brief Função que escreve as alterações efetuadas para os respetivos Ficheiros.
+/// Esta função tem complexidade de O(n²)
 void ScheduleManag::writeFiles() {
     // clear the files before writing to them
     reader_class_uc_save.clearFile();
@@ -98,14 +113,20 @@ void ScheduleManag::writeFiles() {
     }
 }
 
+/// @brief Função Get.
+/// @return Retorna um map com uma UCTurma e os horários associados a esta.
 map<UCTurma, vector<Slot>> ScheduleManag::getClassUCMapSlots() {
     return this->class_uc_map_slots;
 }
 
+/// @brief Função Get.
+/// @return Retorna um set de Estudantes.
 set<Student> ScheduleManag::getStudentsSet() {
     return this->students_set;
 }
 
+/// @brief Função Get.
+/// @return Retorna um vetor de UCTurmas.
 vector<UCTurma> ScheduleManag::getUCTs() {
     vector<UCTurma> ucs;
     for (auto const& [key, val] : this->class_uc_map_slots) {
@@ -114,6 +135,9 @@ vector<UCTurma> ScheduleManag::getUCTs() {
     return ucs;
 }
 
+/// @brief Função Get.
+/// Esta função tem complexidade de O(n)
+/// @return Retorna um set com códigos das várias ucs. 
 set<string> ScheduleManag::getUCs() {
     set<string> ucs;
     for (auto const& [key, val] : this->class_uc_map_slots) {
@@ -122,6 +146,9 @@ set<string> ScheduleManag::getUCs() {
     return ucs;
 }
 
+/// @brief Função Get.
+/// Esta função tem complexidade de O(n).
+/// @return Retorna um vetor de estudantes.
 vector<Student> ScheduleManag::getStudents() {
     vector<Student> students;
     for (auto const& student : this->students_set) {
@@ -130,6 +157,9 @@ vector<Student> ScheduleManag::getStudents() {
     return students;
 }
 
+/// @brief Função Get.
+/// Esta função tem complexidade de O(n).
+/// @return Retorna um vetor de Slots.
 vector<Slot> ScheduleManag::getSlots() {
     vector<Slot> slots;
     for (auto const& [key, val] : this->class_uc_map_slots) {
@@ -140,10 +170,16 @@ vector<Slot> ScheduleManag::getSlots() {
     return slots;
 }
 
+/// @brief Função Get.
+/// @return Retorna o número máximo de estudantes numa turma.
 int ScheduleManag::getMaxStudents() {
     return this->max_students;
 }
 
+/// @brief Função Get.
+/// Esta função tem complexidade de O(n).
+/// @param uc 
+/// @return Retorna um vetor com todas as turmas na uc passada como argumento.
 vector<UCTurma> ScheduleManag::getUCTsByUC(std::string uc) {
     vector<UCTurma> ucs;
     for (auto const& [key, val] : this->class_uc_map_slots) {
@@ -154,11 +190,9 @@ vector<UCTurma> ScheduleManag::getUCTsByUC(std::string uc) {
     return ucs;
 }
 
-//
-//////////////
-//////////////
-//////////////
-//
+/// @brief Função Get.
+/// Esta função tem complexidade de O(n).
+/// @return Retorna um vetor com os horários de todas as turmas.
 vector<ClassSchedule> ScheduleManag::getClassSchedules() {
     vector<ClassSchedule> class_schedules;
     for (auto const& [key, val] : this->class_uc_map_slots) {
@@ -167,6 +201,9 @@ vector<ClassSchedule> ScheduleManag::getClassSchedules() {
     return class_schedules;
 }
 
+/// @brief Função Get.
+/// @param student 
+/// @return Retorna um vetor de UCTurmas do estudante passado como argumento.
 vector<UCTurma> ScheduleManag::getUCTsByStudent(Student student) {
     // search students_set for student
     auto it = students_set.find(student);
@@ -176,6 +213,10 @@ vector<UCTurma> ScheduleManag::getUCTsByStudent(Student student) {
     return vector<UCTurma>();
 }
 
+/// @brief Função Get.
+/// Esta função tem complexidade de O(n²).
+/// @param turma 
+/// @return Retorna todos os estudantes na turma passada como argumento.
 set<Student> ScheduleManag::getStudentsByClass(string turma) {
     set<Student> students;
     for (auto const& student : this->students_set) {
@@ -188,6 +229,10 @@ set<Student> ScheduleManag::getStudentsByClass(string turma) {
     return students;
 }
 
+/// @brief Função Get.
+/// Esta função tem complexidade de O(n²).
+/// @param uc 
+/// @return Retorna um set dos estudantes na UC passada como argumento.
 set<Student> ScheduleManag::getStudentsByUC(string uc) {
     set<Student> students;
     for (auto const& student : this->students_set) {
@@ -200,6 +245,10 @@ set<Student> ScheduleManag::getStudentsByUC(string uc) {
     return students;
 }
 
+/// @brief Função Get.
+/// Esta função tem complexidade de O(n²).
+/// @param uct 
+/// @return Retorna um set dos estudantes na UCTurma passada como argumento.
 set<Student> ScheduleManag::getStudentsByClassAndUC(UCTurma uct) {
     set<Student> students;
     for (auto const& student : this->students_set) {
@@ -212,6 +261,10 @@ set<Student> ScheduleManag::getStudentsByClassAndUC(UCTurma uct) {
     return students;
 }
 
+/// @brief Função Get.
+/// Esta função tem complexidade de O(n).
+/// @param x 
+/// @return Retorna um vetor dos estudantes com mais do que x ucs, sendo x um inteiro passado como argumento.
 vector<Student> ScheduleManag::getStudentsWithMoreThanXUC(int x) {
     vector<Student> students;
     for (auto const& student : this->students_set) {
@@ -222,10 +275,12 @@ vector<Student> ScheduleManag::getStudentsWithMoreThanXUC(int x) {
     return students;
 }
 
+/// @brief Função Get.
+/// Esta função tem complexidade de O(n²).
+/// @param student 
+/// @return Retorna um vetor de Slots do estudante passado como argumento.
 vector<Slot> ScheduleManag::getSlotsByStudent(Student student) {
     vector<Slot> slots;
-    // complexity O(n^3)
-    // find student in set
     for(auto s : students_set.find(student)->classes) {
         for(auto uct : getSlotsByClassAndUC(s)) {
             slots.push_back(uct);
@@ -235,6 +290,10 @@ vector<Slot> ScheduleManag::getSlotsByStudent(Student student) {
     return slots;
 }
 
+/// @brief Função Get.
+/// Esta função tem complexidade de O(n).
+/// @param uc 
+/// @return Retorna um vetor de Slots da UC passada como argumento.
 vector<Slot> ScheduleManag::getSlotsByUC(string uc) {
     vector<Slot> slots;
     //complexity O(n)
@@ -249,6 +308,10 @@ vector<Slot> ScheduleManag::getSlotsByUC(string uc) {
     return slots;
 }
 
+/// @brief Função Get.
+/// Esta função tem complexidade de O(n).
+/// @param clss 
+/// @return Retorna um vetor de Slots da turma passada como argumento.
 vector<Slot> ScheduleManag::getSlotsByClass(string clss) {
     vector<Slot> slots;
     //complexity O(n)
@@ -263,6 +326,10 @@ vector<Slot> ScheduleManag::getSlotsByClass(string clss) {
     return slots;
 }
 
+/// @brief Função Get.
+/// Esta função tem complexidade de O(n).
+/// @param uct 
+/// @return Retorna um vetor de Slots da UCTurma passada como argumento.
 vector<Slot> ScheduleManag::getSlotsByClassAndUC(UCTurma uct) {
     vector<Slot> slots;
     // complexity O(n)
@@ -273,18 +340,13 @@ vector<Slot> ScheduleManag::getSlotsByClassAndUC(UCTurma uct) {
     return slots;
 }
 
-//// literally just adds a UCTurma to the vector in the student map
-//// doesnt check if there is already a UCTurma with the same uc and class
-//void ScheduleManag::addStudentToClass(Student student, string clss) {
-//    // search students_set for student
-//    auto it = students_set.find(student);
-//    if(it != students_set.end()) {
-//        UCTurma uct = UCTurma(student., clss);
-//        it->classes.push_back(uct);
-//    }
-//}
-
-// THIS ONE WORKS, now checks for overlapping slots
+/// @brief Função que adiciona o estudante a uma UC, caso não existam confiltos.
+/// Esta função verifica se o número de estudante e UC são válidos, se a UC passada em argumento tem vagas, se o estudante já se encontra na turma passada como argumento,
+/// e se não existe overlapping entre o horário anterior do estudante e a nova UC à qual este será inscrito.
+/// Esta função tem complexidade de O(n³)
+/// @param student 
+/// @param uc 
+/// @return Retorna True se o estudante for adicionado à UC, False caso contrário.
 bool ScheduleManag::addStudentToUC(Student student, string uc) {
     bool can_add = false;
 
@@ -356,7 +418,10 @@ bool ScheduleManag::addStudentToUC(Student student, string uc) {
     cout << "All classes are full" << endl;
     return false;
 }
-// adds a struct with the arguments to the queue of actions to be done at the end of the day
+
+/// @brief Cria uma struct com os argumentos da função addStudentToUC que é passada para a queue de pedidos.
+/// @param student 
+/// @param uc 
 void ScheduleManag::addStudentToUCQ(Student student, string uc) {
     // create variable of type StudentQ with the arguments
     // UCTurma is takes an empty turma because it is not used in the addStudentToUC function
@@ -366,7 +431,13 @@ void ScheduleManag::addStudentToUCQ(Student student, string uc) {
     this->class_add_queue.push(sq);
 }
 
-// THIS ONE WORKS, now checks for overlapping slots
+/// @brief Função que adiciona um estudante a uma UCTurma, caso não existam conflitos.
+/// Esta função verifica se o número de estudante e UCTurma são válidos, se a UCTurma passada em argumento tem vagas, se o estudante já se encontra na uct passada como argumento,
+/// e se não existe overlapping entre o horário anterior do estudante e a nova UCTurma onde será colocado.
+/// Esta função tem complexidade de O(n²)
+/// @param student 
+/// @param uct 
+/// @return 
 bool ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
     bool can_add = false;
 
@@ -430,7 +501,10 @@ bool ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
     cout << "All classes are full" << endl;
     return false;
 }
-// adds a struct with the arguments to the queue of actions to be done at the end of the day
+
+/// @brief Cria uma struct com os argumentos da função addStudentToClassAndUC que é passada para a queue de pedidos.
+/// @param student 
+/// @param uc 
 void ScheduleManag::addStudentToClassAndUCQ(Student student, UCTurma uct) {
     // create variable of type StudentQ with the arguments
     StudentQ sq {student, uct};
@@ -438,7 +512,9 @@ void ScheduleManag::addStudentToClassAndUCQ(Student student, UCTurma uct) {
     this->class_add_queue.push(sq);
 }
 
-// THIS ONE WORKs?
+/// @brief Remove um estudante de uma determinada turma.
+/// @param student 
+/// @param clss 
 void ScheduleManag::removeStudentFromClass(Student student, string clss) {
     // search students_set for student
     auto it = students_set.find(student);
@@ -458,7 +534,11 @@ void ScheduleManag::removeStudentFromClass(Student student, string clss) {
     }
 }
 
-// WORKS
+/// @brief Remove um estudante de uma UC.
+/// O estudante é também removido de todas as UCTurmas associadas a essa UC.
+/// Esta função tem complexidade de O(n).
+/// @param student 
+/// @param uc 
 void ScheduleManag::removeStudentFromUC(Student student, string uc) {
     // search students_set for student
     auto it = students_set.find(student);
@@ -477,6 +557,10 @@ void ScheduleManag::removeStudentFromUC(Student student, string uc) {
         students_set.insert(found);
     }
 }
+
+/// @brief Cria uma struct com os argumentos da função removeStudentFromUC que é passada para a queue de pedidos.
+/// @param student 
+/// @param uc 
 void ScheduleManag::removeStudentFromUCQ(Student student, string uc) {
     // create variable of type StudentQ with the arguments
     // UCTurma is takes an empty turma because it is not used in the removeStudentFromUC function
@@ -486,7 +570,10 @@ void ScheduleManag::removeStudentFromUCQ(Student student, string uc) {
     this->class_remove_queue.push(sq);
 }
 
-// WORKS
+/// @brief Função que remove um estudante de uma UCTurma.
+/// Esta função tem complexidade de O(n).
+/// @param student 
+/// @param uct 
 void ScheduleManag::removeStudentFromClassAndUC(Student student, UCTurma uct) {
     // search students_set for student
     auto it = students_set.find(student);
@@ -505,6 +592,10 @@ void ScheduleManag::removeStudentFromClassAndUC(Student student, UCTurma uct) {
         students_set.insert(found);
     }
 }
+
+/// @brief Cria uma struct com os argumentos da função removeStudentFromClassAndUC que é passada para a queue de pedidos.
+/// @param student 
+/// @param uct 
 void ScheduleManag::removeStudentFromClassAndUCQ(Student student, UCTurma uct) {
     // create variable of type StudentQ with the arguments
     StudentQ sq {student, uct};
@@ -512,6 +603,10 @@ void ScheduleManag::removeStudentFromClassAndUCQ(Student student, UCTurma uct) {
     this->class_remove_queue.push(sq);
 }
 
+/// @brief Cria uma struct com os argumentos das funções addStudentToClassAndUC e removeStudentFromClassAndUC que é passada para a queue de pedidos.
+/// @param student 
+/// @param old_uct 
+/// @param new_uct 
 void ScheduleManag::modifyStudentsClassAndUCQ(Student student, UCTurma old_uct, UCTurma new_uct) {
     // create variable of type StudentQModify with the arguments
     StudentQModify sq {student, old_uct, new_uct};
@@ -519,6 +614,8 @@ void ScheduleManag::modifyStudentsClassAndUCQ(Student student, UCTurma old_uct, 
     this->class_modify_queue.push(sq);
 }
 
+/// @brief Função que processa sequencialmente, todos os pedidos armazenados na queue.
+/// Esta função tem complexidade de O(n).
 void ScheduleManag::endDay() {
     // go over each queue and execute the actions
 

@@ -21,10 +21,22 @@
 
 using namespace std;
 
+/*! @brief Construtor da classe Menu.
+*   
+*   @param[in] cuf
+*   @param[in] csf
+*   @param[in] scf
+*   @param[in] students_max
+*   @param[in] cufw
+*   @param[in] csfw
+*   @param[in] scfw
+*/
+
 Menu::Menu(string cuf, string csf, string scf, int students_max, string cufw, string csfw, string scfw) : sm(cuf, csf, scf, students_max, cufw, csfw, scfw) {
         sm.readFiles();
     }
 
+/// @brief Imprime para a consola o Menu inicial.
 void Menu::printBaseMenu() {
     cout << "Menu" << endl;
     cout << "0 - Sair e gravar" << endl;
@@ -34,6 +46,10 @@ void Menu::printBaseMenu() {
     cout << "4 - Acabar dia" << endl;        // 4 - Acabar dia
 }
 
+/*! @brief Imprime para a consola o Menu da opção 1.
+*   Esta função serve de interface para a opção 1 do menu anterior.
+*   Responsável pela chamada de todas as funções das outras classes para realizar as várias opções que pertencem á secção 1 do printBaseMenu().
+*/
 void Menu::printMenu1() {
     bool running = true;
     while(running) {
@@ -173,7 +189,10 @@ void Menu::printMenu1() {
     }
 }
 
-// TOTALMENTE FEITO
+/*! @brief Imprime para a consola o Menu da opção 2.
+*   Esta função serve de interface para a opção 2 do menu anterior.
+*   Responsável pela chamada de todas as funções das outras classes para realizar as várias opções que pertencem á secção 2 do printBaseMenu().
+*/
 void Menu::printMenu2() {
     bool running = true;
     while (running) {
@@ -282,6 +301,10 @@ void Menu::printMenu2() {
     }
 }
 
+/*! @brief Imprime para a consola o Menu da opção 3.
+*   Esta função serve de interface para a opção 3 do menu anterior.
+*   Responsável pela chamada de todas as funções das outras classes para realizar as várias opções que pertencem á secção 3 do printBaseMenu().
+*/
 void Menu::printMenu3() {
     bool running = true;
     while(running) {
@@ -386,6 +409,10 @@ void Menu::printMenu3() {
     }
 }
 
+/*! @brief Função responsável por manter o programa a correr até que o utilizador o termine voluntariamente.
+*   É também responsável pela chamada de algumas opções do Menu inicial (como a finalização do dia, opção que escreve as alterações para os ficheiros dos 
+    horários).
+*/
 int Menu::baseMenuLoop() {
     bool running = true;
     while (running) {
@@ -419,13 +446,3 @@ int Menu::baseMenuLoop() {
     }
     return 0;
 } 
-
-
-//ocupacao, tipo, dia, hora, duracao, uc, turma, alunos
-//estudantes numa turma
-//estudantes com mais de x unidades curriculares
-//mostrar horario de um estudante
-//mudar horario
-//editar uc de um estudante
-//acabar o dia
-//sair

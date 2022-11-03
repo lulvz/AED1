@@ -5,6 +5,8 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+
+/// @brief Classe responsável por manipulação dos vários ficheiros Csv.
 class CsvReader {
 public:
     bool error = false;

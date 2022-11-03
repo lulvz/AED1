@@ -4,19 +4,26 @@
 #include <iostream>
 
 template <typename T>
+/// @brief Classe que implementa o algoritmo de pesquisa binária.
+/// @tparam T 
 class BinaryTree {
     public:
         Node<T> *root;
-        // constructor
+        /// @brief Construtor de BinaryTree.
         BinaryTree<T> () {
             root = nullptr;
         }
-        // destructor
+        /// @brief Destrutor de BinaryTree.
         ~BinaryTree<T> () {
             deleteTree(this->root);
         }
 
-        // insert a node in the tree in the optimal location, complexity of O(log n)
+        /*! @brief Função que insere um novo nó na árvore.
+        *   Esta função tem uma complexidade de O(log n).
+        *
+        *   @param[in] data
+        * 
+        */
         void insert(T data) {
             Node<T> *newNode = new Node<T>(data);
             // if there is nothing in the tree yet, make the new node the root
@@ -168,11 +175,19 @@ class BinaryTree {
             }
         }
         */
-        // remove a node from the tree, complexity of O(log n)
+
+        /// @brief Função que chama removeNode.
         void remove(T data) {
             removeNode(root, data);
         }
 
+        /*! @brief Função que remove um nó de uma árvore binária.
+        *   Esta função tem complexidade de O(log n).
+        *
+        *   @param[in] node
+        *   @param[in] data
+        *   @return Retorna o nó removido.
+        */
         Node<T>* removeNode(Node<T>* node, T data) {
             if (node == nullptr) {
                 return nullptr;
@@ -211,7 +226,12 @@ class BinaryTree {
             return current;
         }
 
-        // return a pointer to the node with the given data, complexity of O(log n)
+        /*! @brief Retorna um apontador para um nó, dado um argumento data.
+        *   Esta função tem de complexidade O(log n).
+        *   
+        *   @param[in] data
+        *   @return Retorna um nullpointer.
+        */
         Node<T> *search(T data) {
             Node<T> *current = root;
             while (current != nullptr) {
@@ -226,7 +246,8 @@ class BinaryTree {
             return nullptr;
         }
 
-        // print the tree in order, complexity of O(n)
+        /// @brief Imprime a árvore por ordem.
+        /// Esta função tem complexidade de O(n).
         void printInOrder() {
             printInOrder(root);
             std::cout << std::endl;
@@ -236,7 +257,14 @@ class BinaryTree {
         void printTreeInTreeShape() {
             printTreeInTreeShape(root, 0);
         }
+
         // prints the tree in a tree shape complexity of O(tree)
+        /*! @brief Imprime a árvore binária em forma de árvore.
+        *   Esta função tem complexidade de O(n) [n -> número de elementos da árvore].
+        *   
+        *   @param[in] node
+        *   @param[in] level
+        */
         void printTreeInTreeShape(Node<T> *node, int level) {
             if (node != nullptr) {
                 printTreeInTreeShape(node->right, level + 1);
@@ -248,6 +276,10 @@ class BinaryTree {
             }
         }
         
+        /*! @brief Apaga completamente a árvore.
+        *
+        *   @param[in] node
+        */
         void deleteTree(Node<T> *node) {
             if (node != nullptr) {
                 deleteTree(node->left);
