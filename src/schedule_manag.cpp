@@ -392,7 +392,7 @@ bool ScheduleManag::addStudentToUC(Student student, string uc) {
                 return false;
             }
             // check if class has less than max_students
-            if(getStudentsByClassAndUC(key).size() < this->max_students && can_add) {
+            if(getStudentsByClassAndUC(key).size() < this->max_students) {
                 // search students_set for student
                 auto it = students_set.find(student);
                 if(it != students_set.end()) {
@@ -619,6 +619,23 @@ void ScheduleManag::modifyStudentsClassAndUCQ(Student student, UCTurma old_uct, 
 void ScheduleManag::endDay() {
     // go over each queue and execute the actions
 
+    // queue of students to be removed from a class
+    while(!class_remove_queue.empty()) {
+        // get the first element of the queue
+        StudentQ sq = class_remove_queue.front();
+        cout << "[*] Removing student " << sq.student.name << " from class " << sq.uct.turma << " of UC " << sq.uct.uc << endl;
+        // remove the first element of the queue
+        class_remove_queue.pop();
+        // check if the queue is for removeStudentFromClassAndUC or removeStudentFromUC
+        if(sq.uct.turma == "") {
+            // removeStudentFromUC if turma is empty
+            removeStudentFromUC(sq.student, sq.uct.uc);
+        } else {
+            // removeStudentFromClassAndUC if we have a full UCTurma object
+            removeStudentFromClassAndUC(sq.student, sq.uct);
+        }
+    }
+
     // queue of students to be added to a class
     while(!class_add_queue.empty()) {
         // get the first element of the queue
@@ -640,24 +657,7 @@ void ScheduleManag::endDay() {
                 not_executed_requests_add.push_back(sq);
             }
         }
-    }
-
-    // queue of students to be removed from a class
-    while(!class_remove_queue.empty()) {
-        // get the first element of the queue
-        StudentQ sq = class_remove_queue.front();
-        cout << "[*] Removing student " << sq.student.name << " from class " << sq.uct.turma << " of UC " << sq.uct.uc << endl;
-        // remove the first element of the queue
-        class_remove_queue.pop();
-        // check if the queue is for removeStudentFromClassAndUC or removeStudentFromUC
-        if(sq.uct.turma == "") {
-            // removeStudentFromUC if turma is empty
-            removeStudentFromUC(sq.student, sq.uct.uc);
-        } else {
-            // removeStudentFromClassAndUC if we have a full UCTurma object
-            removeStudentFromClassAndUC(sq.student, sq.uct);
-        }
-    }
+    }   
 
     // queue of students to be modified
     while(!class_modify_queue.empty()) {
