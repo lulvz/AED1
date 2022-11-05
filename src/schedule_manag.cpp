@@ -340,6 +340,20 @@ vector<Slot> ScheduleManag::getSlotsByClassAndUC(UCTurma uct) {
     return slots;
 }
 
+UCTurma ScheduleManag::getSmallestClass(string uc) {
+    UCTurma uct(uc, "");
+    int min = INT_MAX;
+    for (auto const& [key, val] : this->class_uc_map_slots) {
+        if(key.uc == uc) {
+            if(key.turma.size() < min) {
+                min = key.turma.size();
+                uct = key;
+            }
+        }
+    }
+    return uct;
+}
+
 /// @brief Função que adiciona o estudante a uma UC, caso não existam confiltos.
 /// Esta função verifica se o número de estudante e UC são válidos, se a UC passada em argumento tem vagas, se o estudante já se encontra na turma passada como argumento,
 /// e se não existe overlapping entre o horário anterior do estudante e a nova UC à qual este será inscrito.
@@ -391,8 +405,17 @@ bool ScheduleManag::addStudentToUC(Student student, string uc) {
                 cout << "The slots of type PL/TP of the class overlap with the ones already in the student or the uc/class doesn't exist" << endl;
                 return false;
             }
+
+            int num_students = getStudentsByClassAndUC(key).size();
+            // check if the class has less or equal to a difference of 4 students compared to the smallest class
+
+            // if the class is not the smallest, check if the difference between the smallest class and this class is less than 4
+            if(getStudentsByClassAndUC(this->getSmallestClass(uc)).size() - num_students > 4) {
+                break;
+            }
+
             // check if class has less than max_students
-            if(getStudentsByClassAndUC(key).size() < this->max_students) {
+            if(num_students < this->max_students) {
                 // search students_set for student
                 auto it = students_set.find(student);
                 if(it != students_set.end()) {
@@ -478,8 +501,18 @@ bool ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
         cout << "The slots of type PL/TP of the class overlap with the ones already in the student or the uc/class doesn't exist" << endl;
         return false;
     }
+
+    int num_students = getStudentsByClassAndUC(uct).size();
+    // check if the class has less or equal to a difference of 4 students compared to the smallest class
+
+    // if the class is not the smallest, check if the difference between the smallest class and this class is less than 4
+    if(getStudentsByClassAndUC(this->getSmallestClass(uct.uc)).size() - num_students > 4) {
+        return false;
+    }
+
+
     // check if the class has less than max_students
-    if(getStudentsByClassAndUC(uct).size() < max_students) {
+    if(num_students < max_students) {
         // search students_set for student
         auto it = students_set.find(student);
         if(it != students_set.end()) {

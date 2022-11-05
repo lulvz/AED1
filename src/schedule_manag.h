@@ -53,6 +53,8 @@ class ScheduleManag {
         vector<ClassSchedule> getClassSchedules();
         vector<UCTurma> getUCTsByStudent(Student student);
 
+        UCTurma getSmallestClass(string uc);
+
         // menu 1-2
         set<Student> getStudentsByClass(string clss);
         //menu 1-4
