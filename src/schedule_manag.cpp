@@ -469,8 +469,8 @@ bool ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
     if(it != students_set.end()) {
         // check if the student is already in the uc
         for(auto ucturma : it->classes) {
-            if(ucturma.uc == uct.uc) {
-                cout << "Student already in uc" << endl;
+            if(ucturma.uc == uct.uc && ucturma.turma == uct.turma) {
+                cout << "Student already in class" << endl;
                 return false;
             }
         }
@@ -506,7 +506,8 @@ bool ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
     // check if the class has less or equal to a difference of 4 students compared to the smallest class
 
     // if the class is not the smallest, check if the difference between the smallest class and this class is less than 4
-    if(getStudentsByClassAndUC(this->getSmallestClass(uct.uc)).size() - num_students > 4) {
+    if(num_students - getStudentsByClassAndUC(this->getSmallestClass(uct.uc)).size() > 4) {
+        cout << "There is too big of a difference in students between both classes." << endl;
         return false;
     }
 
