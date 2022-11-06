@@ -392,8 +392,7 @@ bool ScheduleManag::addStudentToUC(Student student, string uc) {
                     for(auto const& student_slot : student_slots) {
                         if(student_slot.type == "PL" || student_slot.type == "TP") {
                             // check if the slots overlap in any way
-                            if(!((student_slot.startHour <= slot.startHour + slot.duration) && (slot.startHour <= student_slot.startHour + student_slot.duration))) {
-                                // if it overlaps, dont add the student to this class
+                            if((slot.weekDay != student_slot.weekDay) || !((student_slot.startHour <= slot.startHour + slot.duration) && (slot.startHour <= student_slot.startHour + student_slot.duration))) {
                                 can_add = true;
                                 break;
                             }
@@ -488,8 +487,7 @@ bool ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
             // check if the student has a slot that overlaps with this slot
             for(auto const& student_slot : student_slots) {
                 if(student_slot.type == "PL" || student_slot.type == "TP") {
-                    if(!((student_slot.startHour <= slot.startHour + slot.duration) && (slot.startHour <= student_slot.startHour + student_slot.duration))) {
-                        // if it overlaps, dont add the student to this class
+                    if((slot.weekDay != student_slot.weekDay) || !((student_slot.startHour <= slot.startHour + slot.duration) && (slot.startHour <= student_slot.startHour + student_slot.duration))) {
                         can_add = true;
                         break;
                     }
