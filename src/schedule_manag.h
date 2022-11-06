@@ -68,6 +68,10 @@ class ScheduleManag {
         //menu 1-3
         vector<Student> getStudentsWithMoreThanXUC(int x);
 
+        map<string,int> numberUCperClass(string uc);
+        int dif_SUC(string uc);
+        int max_SUC(string uc);
+
         //menu 2-1
         vector<Slot> getSlotsByStudent(Student student);
         //menu 2-2

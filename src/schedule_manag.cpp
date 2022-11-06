@@ -340,18 +340,65 @@ vector<Slot> ScheduleManag::getSlotsByClassAndUC(UCTurma uct) {
     return slots;
 }
 
-UCTurma ScheduleManag::getSmallestClass(string uc) {
-    UCTurma uct(uc, "");
-    int min = INT_MAX;
-    for (auto const& [key, val] : this->class_uc_map_slots) {
-        if(key.uc == uc) {
-            if(key.turma.size() < min) {
-                min = key.turma.size();
-                uct = key;
+/*!
+ *  Esta função tem complexidade de O(n²)
+ * @param uc
+ * @return Retorna um map que para uma UC relaciona a turma e o número de estudantes
+ */
+map<string,int> ScheduleManag::numberUCperClass(string uc){
+    map<string, int> map1;
+    set<Student> d = getStudentsByUC(uc);
+    for (Student s: d) {
+        for (UCTurma t: s.classes) {
+            if (t.uc == uc) {
+                if(map1.find(uc) != map1.end()){
+                    map1[t.turma]++;
+                }
+                else{
+                    map1[t.turma] = 1;
+                }
             }
         }
     }
-    return uct;
+    return map1;
+}
+
+/*!
+ *  Esta função tem complexidade de O(n²)
+ * @param uc
+ * @return Retorna a diferença máxima de alunos entre duas turmas para uma UC
+ */
+int ScheduleManag::dif_SUC(string uc){
+    map<string,int> map1 = this->numberUCperClass(uc);
+    int min = 26;
+    int max = 0;
+    for(auto kv: map1) {
+        if (kv.second < min) {
+            min = kv.second;
+        }
+        if (kv.second > max) {
+            max = kv.second;
+        }
+
+    }
+    return max - min;
+}
+/*!
+ *  Esta função tem complexidade de O(n²)
+ * @param uc
+ * @return Retorna o número de estudantes da maior turma de uma UC
+ */
+int ScheduleManag::max_SUC(string uc){
+    map<string,int> map1 = this->numberUCperClass(uc);
+    int min = 26;
+    int max = 0;
+    for(auto kv: map1) {
+        if (kv.second > max) {
+            max = kv.second;
+        }
+
+    }
+    return max;
 }
 
 /// @brief Função que adiciona o estudante a uma UC, caso não existam confiltos.
@@ -409,7 +456,11 @@ bool ScheduleManag::addStudentToUC(Student student, string uc) {
             // check if the class has less or equal to a difference of 4 students compared to the smallest class
 
             // if the class is not the smallest, check if the difference between the smallest class and this class is less than 4
-            if(getStudentsByClassAndUC(this->getSmallestClass(uc)).size() - num_students > 4) {
+
+//            if(getStudentsByClassAndUC(this->getSmallestClass(uc)).size() - num_students > 4) {
+//                break;
+//            }
+            if(num_students + 1 > max_SUC(key.uc) && dif_SUC(key.uc) >= 4){
                 break;
             }
 
@@ -502,7 +553,8 @@ bool ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
     // check if the class has less or equal to a difference of 4 students compared to the smallest class
 
     // if the class is not the smallest, check if the difference between the smallest class and this class is less than 4
-    if(num_students - getStudentsByClassAndUC(this->getSmallestClass(uct.uc)).size() > 4) {
+
+    if(num_students + 1 > max_SUC(uct.uc) && dif_SUC(uct.uc) >= 4){
         cout << "There is too big of a difference in students between both classes." << endl;
         return false;
     }

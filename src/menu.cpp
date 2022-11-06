@@ -19,7 +19,13 @@
 #include "utility/bst.h"
 #include "student.h"
 
+
+
 using namespace std;
+struct cmp_name{
+    bool operator() (const Student &lhs,const Student &rhs) {
+        return lhs.name < rhs.name;
+    }};
 
 /*! @brief Construtor da classe Menu.
 *   
@@ -31,7 +37,6 @@ using namespace std;
 *   @param[in] csfw
 *   @param[in] scfw
 */
-
 Menu::Menu(string cuf, string csf, string scf, int students_max, string cufw, string csfw, string scfw) : sm(cuf, csf, scf, students_max, cufw, csfw, scfw) {
         sm.readFiles();
     }
@@ -60,6 +65,7 @@ void Menu::printMenu1() {
         cout << "4 - Estudantes por unidade curricular" << endl;	    // 4 - Estudantes por unidade curricular
         cout << "5 - Turmas e UCs de um estudante" << endl;        // 5 - Turmas e UCs de um estudante
         cout << "6 - Estudantes por turma" << endl;        // 6 - Estudantes por turma
+        cout << "7 - Número de estudantes por turma em determinada UC" << endl; // 7- Número de estudantes por turma em determinada UC
 
         cout << "Opção pretendida: ";
         int opt1 = 0;
@@ -71,16 +77,38 @@ void Menu::printMenu1() {
                 break;
             case 1:
                 {
-                // ocupaçao das turmas
-                for(auto [key, value] : sm.getClassUCMapSlots()) {
-                    set<Student> s = sm.getStudentsByClassAndUC(key);
-                    cout << key.uc << " " << key.turma << " " << s.size() << "/" << sm.getMaxStudents() << endl;
+                cout << "Ordenar por código de estudante ou por nome(c/n):";
+                char p1;
+                cin >> p1; cout << endl;
+                if(p1 == 'n'){
+                    // ocupaçao das turmas
+                    for(auto [key, value] : sm.getClassUCMapSlots()) {
+                        set<Student> s = sm.getStudentsByClassAndUC(key);
+                        set<Student, cmp_name> s2;
+                        for(Student h : s){
+                            s2.insert(h);
+                        }
+                        cout << key.uc << " " << key.turma << " " << s2.size() << "/" << sm.getMaxStudents() << endl;
 
-                    // print students
-                    for(auto it = s.begin(); it != s.end(); it++) {
-                        cout << it->code << " " << it->name << endl;
+                        // print students
+                        for(auto it = s2.begin(); it != s2.end(); it++) {
+                            cout << it->code << " " << it->name << endl;
+                        }
+                        cout << endl;                   
                     }
-                    cout << endl;
+                }
+                else{
+                    for(auto [key, value] : sm.getClassUCMapSlots()) {
+                        set<Student> s = sm.getStudentsByClassAndUC(key);
+                        cout << key.uc << " " << key.turma << " " << s.size() << "/" << sm.getMaxStudents() << endl;
+
+                        // print students
+                        for(auto it = s.begin(); it != s.end(); it++) {
+                            cout << it->code << " " << it->name << endl;
+                        }
+                        cout << endl;                   
+                    }
+
                 }
                 break;
                 }
@@ -89,17 +117,38 @@ void Menu::printMenu1() {
                 cout << "Turma a consultar: ";
                 string turma = "";
                 cin >> turma; cout << endl;
-                set<Student> stByclss = sm.getStudentsByClass(turma);
-                if (stByclss.size() == 0) { 
-                    cout << "Turma inválida." << endl;
-                }
-                else {
-                    cout << "Estudantes na turma " << turma << ":" << endl;
-                    for (Student i : stByclss) {
-                        cout << i.code << ", " << i.name << endl;
+                cout << "Ordenar por código de estudante ou por nome(c/n):";
+                char p2;
+                cin >> p2; cout << endl; 
+                if(p2 == 'n'){
+                    set<Student> stByclss = sm.getStudentsByClass(turma);
+                    set<Student, cmp_name> stByclssName;
+                        for(Student h : stByclss){
+                            stByclssName.insert(h);
+                        }
+                    if (stByclssName.size() == 0) { 
+                        cout << "Turma inválida." << endl;
+                    }
+                    else {
+                        cout << "Estudantes na turma " << turma << ":" << endl;
+                        for (Student i : stByclssName) {
+                            cout << i.code << ", " << i.name << endl;
+                        }
                     }
                 }
-                cout << endl;
+                else{
+                    set<Student> stByclss = sm.getStudentsByClass(turma);
+                    if (stByclss.size() == 0) { 
+                        cout << "Turma inválida." << endl;
+                    }
+                    else {
+                        cout << "Estudantes na turma " << turma << ":" << endl;
+                        for (Student i : stByclss) {
+                            cout << i.code << ", " << i.name << endl;
+                        }
+                    }                
+                }
+                cout << endl;            
                 break;
                 }
             case 3:
@@ -107,16 +156,38 @@ void Menu::printMenu1() {
                 cout << "Número de unidades curriculares: ";
                 int n_ucs = 0;
                 cin >> n_ucs; cout << endl;
+                cout << "Ordenar por código de estudante ou por nome(c/n):";
+                char p3;
+                cin >> p3; cout << endl;
 
+                if(p3 == 'n'){
                 vector<Student> stXuc = sm.getStudentsWithMoreThanXUC(n_ucs);
-                if (stXuc.size() == 0) { 
+                set<Student, cmp_name> stXucName;
+                    for(Student h : stXuc){
+                        stXucName.insert(h);
+                    }
+                if (stXucName.size() == 0) { 
                     cout << "Não existem estudantes com mais do que " << n_ucs << " ucs." << endl;
                 }
                 else {
                     cout << "Estudantes com mais que " << n_ucs << " ucs:" << endl;
-                    for (Student i: stXuc) {
+                    for (Student i: stXucName) {
                         cout << i.code << ", " << i.name << endl;
                     }
+                }
+                }
+                else{
+                    vector<Student> stXuc = sm.getStudentsWithMoreThanXUC(n_ucs);
+                    if (stXuc.size() == 0) { 
+                        cout << "Não existem estudantes com mais do que " << n_ucs << " ucs." << endl;
+                    }
+                    else {
+                        cout << "Estudantes com mais que " << n_ucs << " ucs:" << endl;
+                        for (Student i: stXuc) {
+                            cout << i.code << ", " << i.name << endl;
+                        }
+                    }
+
                 }
                 cout << endl;
                 break;
@@ -126,14 +197,35 @@ void Menu::printMenu1() {
                 cout << "UC pretendida: ";
                 string uc_ = "";
                 cin >> uc_; cout << "\n";
-                set<Student> stByuc = sm.getStudentsByUC(uc_);
-                if (stByuc.size() == 0) {
-                    cout << "Não existem estudantes associados a esta UC." << endl;
+                cout << "Ordenar por código de estudante ou por nome(c/n):";
+                char p4;
+                cin >> p4; cout << endl;
+                if(p4 == 'n'){
+                    set<Student> stByuc = sm.getStudentsByUC(uc_);
+                    set<Student, cmp_name> stByucName;
+                    for(Student h : stByuc){
+                        stByucName.insert(h);
+                    }
+                    if (stByucName.size() == 0) {
+                        cout << "Não existem estudantes associados a esta UC." << endl;
+                    }
+                    else {
+                        cout << "Estudantes na unidade curricular " << uc_ << ":" << endl;
+                        for (Student i: stByucName) {
+                            cout << i.code << ", " << i.name << endl;
+                        }
+                    }
                 }
-                else {
-                    cout << "Estudantes na unidade curricular " << uc_ << ":" << endl;
-                    for (Student i: stByuc) {
-                        cout << i.code << ", " << i.name << endl;
+                else{
+                    set<Student> stByuc = sm.getStudentsByUC(uc_);
+                    if (stByuc.size() == 0) {
+                        cout << "Não existem estudantes associados a esta UC." << endl;
+                    }
+                    else {
+                        cout << "Estudantes na unidade curricular " << uc_ << ":" << endl;
+                        for (Student i: stByuc) {
+                            cout << i.code << ", " << i.name << endl;
+                        }
                     }
                 }
                 cout << endl;
@@ -164,20 +256,41 @@ void Menu::printMenu1() {
                 }
             case 6:
                 {
-                cout << "Turma a consultar: ";
-                string turma = "";
-                cin >> turma; cout << endl;
-                set<Student> stByclss = sm.getStudentsByClass(turma);
-                if (stByclss.size() == 0) { 
-                    cout << "Turma inválida ou sem estudantes." << endl;
-                }
-                else {
-                    cout << "Estudantes na turma " << turma << ":" << endl;
-                    for (Student i : stByclss) {
-                        cout << i.code << ", " << i.name << endl;
+                cout << "Ano:";
+                char a;
+                cin >> a;
+                set<string> res;
+                vector<UCTurma> nt = sm.getUCTs();
+                if (a == '1' || a == '2' || a == '3') {
+                    for (UCTurma tmp: nt) {
+                        if (tmp.turma[0] == a) {
+                            res.insert(tmp.uc);
+                        }
                     }
+                    cout << a << "º ano UCs" << endl;
+                    for (string i: res) {
+                        cout << i << endl;
+                    }
+                    cout << endl;
+                }
+                else{
+                    cout << "Ano inválido" << endl << endl;
                 }
 
+                break;
+                }
+            case 7: {
+                cout << "Unidade Curricular:";
+                string uc;
+                cin >> uc;
+                map<string, int> map1 = sm.numberUCperClass(uc);
+                for (auto kv: map1) {
+                    cout << kv.first << ' ' << kv.second << endl;
+                }
+                cout << endl;
+                if (map1.empty()) {
+                    cout << "UC inválida";
+                }
                 break;
                 }
             default:
