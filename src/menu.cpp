@@ -385,13 +385,14 @@ void Menu::printMenu3() {
             cin >> st_code; 
             cout << endl << endl;
 
-            cout << "UC pretendida: "; cin >> uc_; cout << endl;
-
-            cout << "Turmas a alterar (Deixar ambos os campos em branco para terminar): ";
+            cout << "Turmas e UCs a alterar (escrever 0 em qualquer campo para voltar) \n";
             while (true) {
+                cout << "UC pretendida: "; cin >> uc_; cout << endl;
+                if (uc_ == "0") break;
                 cout << "Turma anterior: "; cin >> turma; cout << endl;
+                if (turma == "0") break;
                 cout << "Nova turma: "; cin >> turma_n; cout << endl;
-                if (turma == "" || turma_n == "") { break; }
+                if (turma_n == "0") break;
                 else {
                     // add to the queue
                     sm.modifyStudentsClassAndUCQ(Student(st_code, n_std), UCTurma(uc_, turma), UCTurma(uc_, turma_n));
