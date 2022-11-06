@@ -362,7 +362,7 @@ UCTurma ScheduleManag::getSmallestClass(string uc) {
 /// @param uc 
 /// @return Retorna True se o estudante for adicionado à UC, False caso contrário.
 bool ScheduleManag::addStudentToUC(Student student, string uc) {
-    bool can_add = false;
+    bool can_add = true;
 
     // check if student exists in students_set
     auto it = students_set.find(student);
@@ -392,8 +392,8 @@ bool ScheduleManag::addStudentToUC(Student student, string uc) {
                     for(auto const& student_slot : student_slots) {
                         if(student_slot.type == "PL" || student_slot.type == "TP") {
                             // check if the slots overlap in any way
-                            if((slot.weekDay != student_slot.weekDay) || !((student_slot.startHour <= slot.startHour + slot.duration) && (slot.startHour <= student_slot.startHour + student_slot.duration))) {
-                                can_add = true;
+                            if((slot.weekDay == student_slot.weekDay) && ((student_slot.startHour <= slot.startHour + slot.duration) && (slot.startHour <= student_slot.startHour + student_slot.duration))) {
+                                can_add = false;
                                 break;
                             }
                         }
@@ -427,10 +427,8 @@ bool ScheduleManag::addStudentToUC(Student student, string uc) {
                     // add the student back to the set
                     students_set.insert(found);
                 } else {
-                    // if the student is not in the set, add it
-                    UCTurma uct = UCTurma(uc, key.turma);
-                    student.classes.push_back(uct);
-                    students_set.insert(student);
+                    cout << "Student doesnt exist." << endl;
+                    return false;
                 }
                 return true;
             }
@@ -461,7 +459,7 @@ void ScheduleManag::addStudentToUCQ(Student student, string uc) {
 /// @param uct 
 /// @return 
 bool ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
-    bool can_add = false;
+    bool can_add = true;
 
     // check if student exists in students_set
     auto it = students_set.find(student);
@@ -487,8 +485,8 @@ bool ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
             // check if the student has a slot that overlaps with this slot
             for(auto const& student_slot : student_slots) {
                 if(student_slot.type == "PL" || student_slot.type == "TP") {
-                    if((slot.weekDay != student_slot.weekDay) || !((student_slot.startHour <= slot.startHour + slot.duration) && (slot.startHour <= student_slot.startHour + student_slot.duration))) {
-                        can_add = true;
+                    if((slot.weekDay == student_slot.weekDay) && ((student_slot.startHour <= slot.startHour + slot.duration) && (slot.startHour <= student_slot.startHour + student_slot.duration))) {
+                        can_add = false;
                         break;
                     }
                 }
@@ -523,9 +521,8 @@ bool ScheduleManag::addStudentToClassAndUC(Student student, UCTurma uct) {
             // add the student back to the set
             students_set.insert(found);
         } else {
-            // add student to students_set
-            student.classes.push_back(uct);
-            students_set.insert(student);
+            cout << "Student doesnt exist." << endl;
+            return false;
         }
         return true;
     }
