@@ -16,9 +16,6 @@
 
 #include "utility/csv_reader.h"
 
-#include "utility/bst.h"
-#include "student.h"
-
 #define CLASS_UC_FILE "../schedule/classes_per_uc.csv"
 #define CLASS_SCHEDULE_FILE "../schedule/classes.csv"
 #define STUDENT_FILE "../schedule/students_classes.csv"

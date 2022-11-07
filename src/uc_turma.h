@@ -53,7 +53,7 @@ namespace std{
     *   @return Retorna True se o resultado da concatenação das strings uc e turma de lhs, for menor que o resultado da concatenação
     *           das strings uc e turma de rhs.
     */
-    bool operator() (const UCTurma &lhs,const UCTurma &rhs) {
+    bool operator() (const UCTurma &lhs,const UCTurma &rhs) const {
         return (lhs.uc+lhs.turma) < (rhs.uc+rhs.turma);
     }};
 }

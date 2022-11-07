@@ -23,7 +23,7 @@
 
 using namespace std;
 struct cmp_name{
-    bool operator() (const Student &lhs,const Student &rhs) {
+    bool operator() (const Student &lhs,const Student &rhs) const {
         return lhs.name < rhs.name;
     }};
 
@@ -64,7 +64,7 @@ void Menu::printMenu1() {
         cout << "3 - Estudantes com mais de x unidades curriculares" << endl;	    // 3 - Estudantes com mais de x unidades curriculares
         cout << "4 - Estudantes por unidade curricular" << endl;	    // 4 - Estudantes por unidade curricular
         cout << "5 - Turmas e UCs de um estudante" << endl;        // 5 - Turmas e UCs de um estudante
-        cout << "6 - Estudantes por turma" << endl;        // 6 - Estudantes por turma
+        cout << "6 - UCs por ano" << endl;        // 6 - Estudantes por turma
         cout << "7 - Número de estudantes por turma em determinada UC" << endl; // 7- Número de estudantes por turma em determinada UC
 
         cout << "Opção pretendida: ";

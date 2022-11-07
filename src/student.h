@@ -41,7 +41,7 @@ class Student {
         *   @return Retorna True se o código do Student à esquerda do operador for menor do que está à direita deste.
         */
 
-        bool operator< (const Student &s) {
+        bool operator< (const Student &s) const {
             return code < s.code;
         }
 
@@ -50,7 +50,7 @@ class Student {
         *   @return Retorna True se o código dos dois objetos Student a serem comparados for igual.
         */
 
-        bool operator== (const Student &s)  {
+        bool operator== (const Student &s) const {
             return code == s.code;
         }
 
@@ -103,7 +103,7 @@ namespace std{
     * 
     *   @return Retorna True se o código do estudante lhs for menor que o código do estudante rhs.
     */
-    bool operator() (const Student &lhs, const Student &rhs) {
+    bool operator() (const Student &lhs, const Student &rhs) const {
         return lhs.code < rhs.code;
     }};
 }

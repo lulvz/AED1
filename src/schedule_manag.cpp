@@ -351,7 +351,7 @@ map<string,int> ScheduleManag::numberUCperClass(string uc){
     for (Student s: d) {
         for (UCTurma t: s.classes) {
             if (t.uc == uc) {
-                if(map1.find(uc) != map1.end()){
+                if(map1.find(t.turma) != map1.end()){
                     map1[t.turma]++;
                 }
                 else{
@@ -448,8 +448,8 @@ bool ScheduleManag::addStudentToUC(Student student, string uc) {
                 }
             }
             if(!can_add) {
-                cout << "The slots of type PL/TP of the class overlap with the ones already in the student or the uc/class doesn't exist" << endl;
-                return false;
+                can_add = true;
+                continue;
             }
 
             int num_students = getStudentsByClassAndUC(key).size();
@@ -461,7 +461,7 @@ bool ScheduleManag::addStudentToUC(Student student, string uc) {
 //                break;
 //            }
             if(num_students + 1 > max_SUC(key.uc) && dif_SUC(key.uc) >= 4){
-                break;
+                continue;
             }
 
             // check if class has less than max_students
