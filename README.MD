@@ -17,3 +17,9 @@ Compile the project using the CMakeLists.txt file and run it. Then use the inter
 - schedule/classes.csv
 - schedule/classes_per_uc.csv
 - schedule/students_classes.csv
+
+## This project was developed by:
+
+Luís Tavares - up202108662
+Rodrigo Rodrigues - up202108847
+Miguel Leitão - up202108851
